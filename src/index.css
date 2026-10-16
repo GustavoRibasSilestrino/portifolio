@@ -18,6 +18,8 @@
 }
 
 html, body, #root { height: 100%; }
+/* no celular, 100dvh acompanha a barra de endereço do navegador */
+#root { height: 100dvh; }
 body {
   @apply bg-paper text-ink font-sans overflow-hidden;
   background-image: radial-gradient(rgb(var(--c-ink) / 0.16) 1.2px, transparent 1.2px);

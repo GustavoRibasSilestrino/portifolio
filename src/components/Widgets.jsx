@@ -360,7 +360,7 @@ function MusicBody() {
 
 // ---------- cards soltos pela tela ----------
 
-const cards = [
+export const cards = [
   { id: 'estrada', col: 'a', title: widgetText.career, enabled: !!career.since, Body: CareerBody },
   { id: 'clima', col: 'a', title: widgetText.weather, enabled: true, Body: WeatherBody },
   { id: 'musica', col: 'a', title: widgetText.music, enabled: music.playlist.length > 0, width: 300, Body: MusicBody },

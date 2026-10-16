@@ -49,7 +49,10 @@ export default function Terminal() {
   }
 
   return (
-    <div className="-m-5 min-h-[240px] bg-bar p-4 font-term text-xs text-green-300">
+    <div
+      className="-m-5 bg-bar p-4 font-term text-xs text-green-300"
+      style={{ minHeight: 'max(240px, calc(100% + 2.5rem))' }}
+    >
       {lines.map((l, i) => (
         <pre key={i} className={`whitespace-pre-wrap ${l.k === 'in' ? 'text-onbar' : ''}`}>
           {l.k === 'in' ? '$ ' : ''}

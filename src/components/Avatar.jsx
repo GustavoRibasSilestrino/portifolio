@@ -4,7 +4,6 @@ import { useApp } from '../context'
 import { ui } from '../data'
 
 const PORTRAIT = '/avatar-portrait.webp'
-const S = 340 // lado do avatar na tela (px)
 
 // Divisão do busto em duas camadas, para a cabeça virar sozinha sobre o pescoço (frações da altura da imagem).
 const BODY_START = 0.445
@@ -59,7 +58,8 @@ function Hand() {
 
 // Avatar 2D animado: a cabeça acompanha o mouse, o corpo respira, os olhos piscam e,
 // ao clicar, ele balança a cabeça e acena com a mão.
-export default function Avatar() {
+export default function Avatar({ size = 340 }) {
+  const S = size // lado do avatar na tela (px)
   const { t } = useApp()
   const [waving, setWaving] = useState(false)
   const [blink, setBlink] = useState(false)

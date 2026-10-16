@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import Window from './components/Window'
 import Taskbar from './components/Taskbar'
@@ -6,6 +6,7 @@ import Avatar from './components/Avatar'
 import Widgets from './components/Widgets'
 import Icon from './components/Icon'
 import CursorTrail from './components/CursorTrail'
+import MobileShell from './components/MobileShell'
 import {
   AboutPanel,
   ExperiencePanel,
@@ -31,8 +32,22 @@ const apps = [
   { id: 'agora', icon: 'sparkles', title: { pt: 'Agora', en: 'Now' }, Body: NowPanel, width: 480 },
 ]
 
+// celular: abaixo de 768px usamos a versão com barra inferior e apps em tela cheia
+function useIsMobile() {
+  const query = '(max-width: 767px)'
+  const [mobile, setMobile] = useState(() => window.matchMedia(query).matches)
+  useEffect(() => {
+    const mq = window.matchMedia(query)
+    const on = () => setMobile(mq.matches)
+    mq.addEventListener('change', on)
+    return () => mq.removeEventListener('change', on)
+  }, [])
+  return mobile
+}
+
 export default function App() {
   const { t } = useApp()
+  const isMobile = useIsMobile()
   const [open, setOpen] = useState(['sobre'])
   const [order, setOrder] = useState(['sobre'])
   const [minimized, setMinimized] = useState([])
@@ -59,6 +74,8 @@ export default function App() {
     if (visible[visible.length - 1] === id) return minimize(id)
     focus(id)
   }
+
+  if (isMobile) return <MobileShell apps={apps} />
 
   return (
     <div className="relative h-full w-full overflow-hidden">
