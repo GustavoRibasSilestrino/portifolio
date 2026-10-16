@@ -3,10 +3,10 @@ import { AnimatePresence, motion } from 'framer-motion'
 import Icon from './Icon'
 import Swatches from './Swatches'
 import Avatar from './Avatar'
-import { cards } from './Widgets'
+import { cards, CareerBody, YouTubeBody } from './Widgets'
 import { useApp } from '../context'
 import { palettes } from '../palettes'
-import { credits, cv, profile, ui } from '../data'
+import { career, credits, cv, music, profile, ui } from '../data'
 
 function Tab({ icon, label, on, onClick }) {
   return (
@@ -64,13 +64,15 @@ export default function MobileShell({ apps }) {
     setShowPalettes(false)
   }
 
-  const visibleCards = cards
+  // clima, status e GitHub não cabem na tela inicial do celular: ficam dentro do app "Agora"
+  const extraCards = cards.filter((c) => ['clima', 'status', 'github'].includes(c.id))
+  const MusicCard = music.youtube?.id ? YouTubeBody : null
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       {/* tela inicial */}
       <div className="flex min-h-0 flex-1 flex-col px-5 pt-6">
-        <h1 className="font-display text-[clamp(2.4rem,13vw,3.4rem)] font-bold leading-[0.92] tracking-[-0.025em] text-ink/85">
+        <h1 className="font-display text-[clamp(2rem,8.5vw,3rem)] font-bold leading-[0.92] tracking-[-0.025em] text-ink/85">
           Gustavo
           <br />
           Ribas
@@ -81,24 +83,18 @@ export default function MobileShell({ apps }) {
           <Avatar size={size} />
         </div>
 
-        {/* cards em carrossel horizontal */}
-        <div className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-5 pt-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {visibleCards.map((c) => (
-            <div
-              key={c.id}
-              className={`box w-[78vw] max-w-[320px] shrink-0 snap-center overflow-hidden [--depth:5px] ${
-                c.id === 'musica' ? '' : 'max-h-[190px]'
-              }`}
-            >
-              <div className="flex items-center gap-1.5 border-b border-ink/10 px-3 py-1.5 text-[11px] font-medium opacity-80">
-                <Icon name="grip" size={12} />
-                <span className="truncate">{t(c.title)}</span>
-              </div>
-              <div className="overflow-hidden p-3">
-                <c.Body />
-              </div>
+        {/* dois cards compactos empilhados, como no portfólio de referência */}
+        <div className="space-y-2.5 pb-5 pt-3">
+          {career.since && (
+            <div className="box p-3 [--depth:4px]">
+              <CareerBody compact />
             </div>
-          ))}
+          )}
+          {MusicCard && (
+            <div className="box p-3 [--depth:4px]">
+              <MusicCard compact />
+            </div>
+          )}
         </div>
       </div>
 
@@ -122,6 +118,21 @@ export default function MobileShell({ apps }) {
             </header>
             <div className="scroll flex-1 overflow-y-auto p-5 text-[15px] leading-relaxed">
               <app.Body />
+              {app.id === 'agora' && (
+                <div className="mt-6 space-y-4">
+                  {extraCards.map((c) => (
+                    <div key={c.id} className="box mb-1 mr-1.5 overflow-hidden [--depth:5px]">
+                      <div className="flex items-center gap-1.5 border-b border-ink/10 px-3 py-1.5 text-[11px] font-medium opacity-80">
+                        <Icon name="grip" size={12} />
+                        <span className="truncate">{t(c.title)}</span>
+                      </div>
+                      <div className="p-3">
+                        <c.Body />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </motion.section>
         )}

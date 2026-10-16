@@ -73,6 +73,7 @@ const paths = {
     </>
   ),
   check: <polyline points="20 6 9 17 4 12" />,
+  chevron: <path d="m6 9 6 6 6-6" />,
   download: (
     <>
       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />

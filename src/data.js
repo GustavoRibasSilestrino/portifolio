@@ -279,6 +279,7 @@ export const ui = {
   system: { pt: 'Sistema', en: 'System' },
   downloadCv: { pt: 'Baixar currículo', en: 'Download résumé' },
   resetLayout: { pt: 'Redefinir layout', en: 'Reset layout' },
+  expand: { pt: 'Expandir', en: 'Expand' },
   play: { pt: 'Tocar', en: 'Play' },
   pause: { pt: 'Pausar', en: 'Pause' },
   openYoutube: { pt: 'Abrir no YouTube', en: 'Open on YouTube' },

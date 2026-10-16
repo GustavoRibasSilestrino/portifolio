@@ -123,11 +123,33 @@ function diffYMD(from, to) {
   return { y: Math.max(y, 0), m, d }
 }
 
-function CareerBody() {
+// compact = versão do celular: números à esquerda e o texto à direita, numa linha só.
+export function CareerBody({ compact = false }) {
   const { t, lang } = useApp()
   const from = new Date(`${career.since}T00:00:00`)
   const { y, m, d } = diffYMD(from, new Date())
   const since = from.toLocaleDateString(lang === 'en' ? 'en-US' : 'pt-BR', { month: 'long', year: 'numeric' })
+  if (compact) {
+    return (
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex shrink-0 items-end gap-3">
+          {[
+            [y, widgetText.years],
+            [m, widgetText.months],
+            [d, widgetText.days],
+          ].map(([n, label], i) => (
+            <div key={i}>
+              <div className="text-2xl font-semibold leading-none">{n}</div>
+              <div className="mt-1 text-[10px] opacity-60">{t(label)}</div>
+            </div>
+          ))}
+        </div>
+        <p className="min-w-0 text-right text-[11px] leading-tight opacity-80">
+          {t(career.sinceText)} {since}
+        </p>
+      </div>
+    )
+  }
   return (
     <>
       <div className="flex items-end gap-4">
@@ -284,9 +306,11 @@ const loadYouTubeApi = () => {
 
 // Player de música com interface própria. O áudio vem do YouTube: o vídeo fica num iframe de 1×1 pixel,
 // invisível, controlado pela API oficial (play/pause, tempo, volume). Nada é baixado.
-function YouTubeBody() {
+// compact = versão do celular: capa, título, tocar e uma seta que expande a barra de duração.
+export function YouTubeBody({ compact = false }) {
   const { t } = useApp()
   const { id, title, artist } = music.youtube
+  const [expanded, setExpanded] = useState(false)
   const host = useRef(null)
   const player = useRef(null)
   const [s, setS] = useState({ ready: false, playing: false, cur: 0, dur: 0, error: false })
@@ -365,7 +389,7 @@ function YouTubeBody() {
           src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`}
           alt=""
           draggable={false}
-          className="h-12 w-12 shrink-0 rounded-md border border-ink/20 object-cover"
+          className={`shrink-0 rounded-md border border-ink/20 object-cover ${compact ? 'h-10 w-10' : 'h-12 w-12'}`}
         />
         <div className="min-w-0 flex-1">
           <div className="truncate text-sm font-semibold">{title}</div>
@@ -377,13 +401,27 @@ function YouTubeBody() {
           disabled={!s.ready}
           aria-label={s.playing ? t(ui.pause) : t(ui.play)}
           title={s.playing ? t(ui.pause) : t(ui.play)}
-          className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent text-card transition disabled:opacity-50"
+          className={`grid shrink-0 place-items-center rounded-full bg-accent text-card transition disabled:opacity-50 ${
+            compact ? 'h-9 w-9' : 'h-10 w-10'
+          }`}
         >
-          <Icon name={s.playing ? 'pause' : 'play'} size={18} />
+          <Icon name={s.playing ? 'pause' : 'play'} size={compact ? 16 : 18} />
         </button>
+        {compact && (
+          <button
+            onClick={() => setExpanded((e) => !e)}
+            aria-expanded={expanded}
+            aria-label={expanded ? t(ui.close) : t(ui.expand)}
+            className="grid h-8 w-8 shrink-0 place-items-center"
+          >
+            <span className={`transition-transform ${expanded ? 'rotate-180' : ''}`}>
+              <Icon name="chevron" size={18} />
+            </span>
+          </button>
+        )}
       </div>
 
-      {s.error ? (
+      {compact && !expanded ? null : s.error ? (
         <a
           href={`https://www.youtube.com/watch?v=${id}`}
           target="_blank"
