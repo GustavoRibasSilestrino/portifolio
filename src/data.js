@@ -97,7 +97,10 @@ export const featured = {
     en: 'Member of the "Coders" team, in the ADS course at SENAI Sorocaba.',
   },
   // Conte aqui o que VOCÊ fez no projeto (ex.: telas, banco de dados, regras de negócio). Vazio = não aparece.
-  roleDetail: { pt: '', en: '' },
+  roleDetail: {
+    pt: 'Contribuí com a documentação, o front end e, em menor parte, o back end.',
+    en: 'I contributed to the documentation, the front end and, to a lesser extent, the back end.',
+  },
   links: {
     demo: 'https://finsight-app-lyart.vercel.app',
     code: 'https://github.com/GustavoRibasSilestrino/finsight',
