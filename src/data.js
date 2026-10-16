@@ -4,19 +4,19 @@
 export const profile = {
   name: 'Gustavo Ribas Silestrino',
   age: 19,
-  city: 'Salto de Itu, SP',
+  city: 'Salto, SP',
   status: { pt: 'Aberto a oportunidades', en: 'Open to opportunities' },
   role: { pt: 'Estudante de ADS · futuro dev back end', en: 'ADS student · future back end dev' },
   headline: {
-    pt: 'Estudante de ADS no SENAI Sorocaba · Salto de Itu, SP',
-    en: 'ADS student at SENAI Sorocaba · Salto de Itu, SP',
+    pt: 'Estudante de ADS no SENAI Sorocaba · Salto, SP',
+    en: 'ADS student at SENAI Sorocaba · Salto, SP',
   },
   hello: { pt: 'Oi, eu sou o Gustavo', en: "Hi, I'm Gustavo" },
   school: 'ADS · SENAI Sorocaba',
   about: [
     {
-      pt: 'Oi! Eu sou o Gustavo, tenho 19 anos e nasci em Salto de Itu, interior de São Paulo.',
-      en: "Hi! I'm Gustavo, I'm 19 and I was born in Salto de Itu, in the countryside of São Paulo, Brazil.",
+      pt: 'Oi! Eu sou o Gustavo, tenho 19 anos e nasci em Salto, interior de São Paulo.',
+      en: "Hi! I'm Gustavo, I'm 19 and I was born in Salto, in the countryside of São Paulo, Brazil.",
     },
     {
       pt: 'Curso Análise e Desenvolvimento de Sistemas no SENAI Sorocaba e hoje meu foco é aprender Java a fundo, entender como sistemas realmente funcionam por baixo dos panos: regras de negócio, APIs e banco de dados.',
