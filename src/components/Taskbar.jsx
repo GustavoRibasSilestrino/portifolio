@@ -3,7 +3,7 @@ import Icon from './Icon'
 import Swatches from './Swatches'
 import { useApp } from '../context'
 import { palettes } from '../palettes'
-import { ui } from '../data'
+import { credits, ui } from '../data'
 
 export default function Taskbar({ apps, open, minimized, onOpen, onTask }) {
   const { lang, setLang, mode, setMode, palette, setPalette, t } = useApp()
@@ -69,6 +69,16 @@ export default function Taskbar({ apps, open, minimized, onOpen, onTask }) {
           )
         })}
       </div>
+
+      {/* crédito da inspiração */}
+      <a
+        href={credits.url}
+        target="_blank"
+        rel="noreferrer"
+        className="hidden shrink-0 pr-1 text-[11px] opacity-60 transition hover:opacity-100 xl:block"
+      >
+        {t(credits.label)} <span className="font-semibold underline-offset-2 hover:underline">{credits.name}</span>
+      </a>
 
       {/* idioma */}
       <div role="group" aria-label={t(ui.language)} className="flex overflow-hidden rounded border border-onbar/40 text-xs font-bold">

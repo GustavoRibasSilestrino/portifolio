@@ -1,16 +1,32 @@
-# React + Vite
+# Portfólio · Gustavo Ribas Silestrino
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Portfólio em formato de **desktop de sistema operacional**: janelas arrastáveis, cards soltos, avatar animado,
+terminal, idioma PT/EN, tema claro/escuro e 9 paletas de cor. Também tem uma versão pensada para celular.
 
-Currently, two official plugins are available:
+🔗 **https://portifolio-ribas2.vercel.app**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Créditos
 
-## React Compiler
+O conceito visual deste portfólio foi **inspirado no portfólio de [Jonathan Bergamo](https://www.linkedin.com/in/jonathanbergamo/)**
+(jonathanbergamo.vercel.app). Todo o código, textos, imagens e conteúdo aqui são próprios.
+Obrigado pela inspiração, Jonathan!
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tecnologias
 
-## Expanding the Oxlint configuration
+- React 19 + Vite
+- Tailwind CSS 3
+- Framer Motion
+- Dados reais por APIs públicas: Open-Meteo (clima) e GitHub (atividade)
+- Música via API oficial do YouTube
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## Como rodar
+
+```bash
+npm install
+npm run dev      # desenvolvimento
+npm run build    # gera a pasta dist
+```
+
+## Onde editar o conteúdo
+
+Quase tudo (textos, projetos, experiência, contatos, música) fica em [`src/data.js`](src/data.js).

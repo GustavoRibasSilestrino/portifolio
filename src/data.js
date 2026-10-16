@@ -256,6 +256,13 @@ export const weatherQuips = [
   { max: Infinity, pt: 'Calor demais. Até o processador pede arrego.', en: 'Way too hot. Even the CPU is begging for mercy.' },
 ]
 
+// Crédito da inspiração do design
+export const credits = {
+  label: { pt: 'Design inspirado em', en: 'Design inspired by' },
+  name: 'Jonathan Bergamo',
+  url: 'https://www.linkedin.com/in/jonathanbergamo/',
+}
+
 // Textos da interface
 export const ui = {
   start: { pt: 'Iniciar', en: 'Start' },

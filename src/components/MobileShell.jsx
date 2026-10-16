@@ -6,7 +6,7 @@ import Avatar from './Avatar'
 import { cards } from './Widgets'
 import { useApp } from '../context'
 import { palettes } from '../palettes'
-import { profile, ui } from '../data'
+import { credits, profile, ui } from '../data'
 
 function Tab({ icon, label, on, onClick }) {
   return (
@@ -213,6 +213,15 @@ export default function MobileShell({ apps }) {
                   ))}
                 </div>
               )}
+
+              <a
+                href={credits.url}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 block text-center text-[11px] opacity-60"
+              >
+                {t(credits.label)} <span className="font-semibold underline">{credits.name}</span>
+              </a>
             </motion.div>
           </>
         )}
