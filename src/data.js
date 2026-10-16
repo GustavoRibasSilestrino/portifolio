@@ -79,6 +79,15 @@ export const projects = [
 export const timeline = [
   {
     when: { pt: 'Atual', en: 'Current' },
+    title: { pt: 'Auxiliar de escrevente', en: 'Notary clerk assistant' },
+    where: 'Tabelionato de Letras e Títulos de Sorocaba',
+    text: {
+      pt: 'Apoio à rotina do cartório: atendimento ao público, conferência e organização de documentos e suporte aos escreventes. Uma área fora da tecnologia, que me ensinou responsabilidade, atenção aos detalhes e a trabalhar com prazos e processos.',
+      en: 'Supporting the daily routine of the notary office: serving the public, checking and organizing documents and assisting the clerks. A field outside technology that taught me responsibility, attention to detail and how to work with deadlines and processes.',
+    },
+  },
+  {
+    when: { pt: 'Cursando', en: 'Studying' },
     title: { pt: 'Análise e Desenvolvimento de Sistemas', en: 'Systems Analysis and Development' },
     where: 'SENAI Sorocaba',
     text: {
