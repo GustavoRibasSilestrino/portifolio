@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root { height: 100%; }
+body {
+  @apply bg-paper text-ink font-sans overflow-hidden;
+  background-image: radial-gradient(rgba(0,0,0,.08) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+.box { @apply bg-paper border-2 border-ink rounded-lg shadow-[3px_3px_0_0_#1c1c1a]; }
+.scroll::-webkit-scrollbar { width: 8px; }
+.scroll::-webkit-scrollbar-thumb { background: #1c1c1a; border-radius: 4px; }
