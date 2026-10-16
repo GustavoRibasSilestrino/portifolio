@@ -72,7 +72,9 @@ const apps = [
         <p>Quer conversar, trocar ideia ou me chamar para um projeto? Fala comigo:</p>
         <a className="block underline" href={`mailto:${contact.email}`}>{contact.email}</a>
         <a className="block underline" href={contact.github} target="_blank" rel="noreferrer">GitHub</a>
-        <a className="block underline" href={contact.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
+        {contact.linkedin && (
+          <a className="block underline" href={contact.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
+        )}
       </div>
     ),
   },

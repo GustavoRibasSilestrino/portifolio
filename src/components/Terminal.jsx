@@ -14,7 +14,9 @@ const run = (cmd) => {
     case 'projetos':
       return projects.map((p) => `- ${p.name}`).join('\n')
     case 'contato':
-      return `email: ${contact.email}\ngithub: ${contact.github}`
+      return [`email: ${contact.email}`, `github: ${contact.github}`, contact.linkedin && `linkedin: ${contact.linkedin}`]
+        .filter(Boolean)
+        .join('\n')
     default:
       return `comando não encontrado: ${cmd} (digite "help")`
   }

@@ -46,9 +46,8 @@ export const timeline = [
   { when: 'Autodidata', title: 'Desenvolvimento web front end', where: 'Estudos e projetos pessoais', text: 'JavaScript, React e Tailwind CSS aplicados em pequenos projetos.' },
 ]
 
-// TODO: troque pelos seus contatos reais antes de publicar.
 export const contact = {
-  email: 'seu-email@exemplo.com',
-  github: 'https://github.com/seu-usuario',
-  linkedin: 'https://linkedin.com/in/seu-usuario',
+  email: 'gustavoribas.silestrino@gmail.com',
+  github: 'https://github.com/GustavoRibasSilestrino',
+  linkedin: '', // adicione o link do seu perfil para o LinkedIn aparecer
 }
