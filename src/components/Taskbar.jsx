@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import Icon from './Icon'
+import Swatches from './Swatches'
 import { useApp } from '../context'
 import { palettes } from '../palettes'
 import { ui } from '../data'
@@ -96,7 +97,7 @@ export default function Taskbar({ apps, open, minimized, onOpen, onTask }) {
       {/* paletas */}
       <div ref={palRef} className="relative">
         {pal && (
-          <div className="box absolute bottom-10 right-0 w-64 p-1 text-ink">
+          <div className="box absolute bottom-10 right-0 w-72 p-1 text-ink">
             {palettes.map((p) => (
               <button
                 key={p.id}
@@ -106,11 +107,7 @@ export default function Taskbar({ apps, open, minimized, onOpen, onTask }) {
                 }}
                 className="flex w-full items-center gap-3 rounded px-2 py-1.5 text-left hover:bg-ink/10"
               >
-                <span className="flex overflow-hidden rounded border border-ink/30">
-                  {[p.ink, p.mid, p.bg, p.accent].map((c) => (
-                    <span key={c} style={{ background: c }} className="h-5 w-5" />
-                  ))}
-                </span>
+                <Swatches palette={p} size={18} />
                 <span className="flex-1 text-sm leading-tight">{t(p.name)}</span>
                 {p.id === palette && <Icon name="check" size={14} />}
               </button>

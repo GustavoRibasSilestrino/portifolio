@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Icon from './Icon'
+import Swatches from './Swatches'
 import Avatar from './Avatar'
 import { cards } from './Widgets'
 import { useApp } from '../context'
@@ -200,11 +201,7 @@ export default function MobileShell({ apps }) {
                         p.id === palette ? 'border-accent' : 'border-ink/15'
                       }`}
                     >
-                      <span className="flex shrink-0 overflow-hidden rounded border border-ink/30">
-                        {[p.ink, p.mid, p.bg, p.accent].map((c) => (
-                          <span key={c} style={{ background: c }} className="h-4 w-4" />
-                        ))}
-                      </span>
+                      <Swatches palette={p} size={14} />
                       <span className="flex-1 leading-tight">{t(p.name)}</span>
                       {p.id === palette && <Icon name="check" size={14} />}
                     </button>
