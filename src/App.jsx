@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import Window from './components/Window'
 import Taskbar from './components/Taskbar'
-import Avatar from './components/Avatar'
+import Avatar, { AVATAR_ASPECT } from './components/Avatar'
 import Widgets from './components/Widgets'
 import Icon from './components/Icon'
 import CursorTrail from './components/CursorTrail'
@@ -60,11 +60,14 @@ function useViewport() {
 // O avatar ocupa o espaço vazio do centro: cresce com a tela (até 560px) e fica entre a janela
 // "Sobre mim" (termina perto de x = 940) e o canto direito, sem passar da lixeira.
 function avatarLayout({ w, h }) {
-  const size = Math.round(Math.min(Math.max(340, w * 0.28), 560, (h - 140) * 0.9))
+  // size = ALTURA do avatar; a largura segue a proporção das camadas (mais alto que largo)
+  // (h - 240) / 1.2 deixa o plumbob e o balão de fala abaixo do nome, no topo da tela
+  const size = Math.round(Math.min(Math.max(380, w * 0.42), 620, (h - 240) / 1.2))
+  const width = size * AVATAR_ASPECT
   const freeStart = 990 // um pouco afastado da janela "Sobre mim"
   const freeEnd = w * 0.85
-  const centered = (freeStart + freeEnd) / 2 - size / 2
-  const left = Math.min(Math.max(centered, 900), w - size - 100)
+  const centered = (freeStart + freeEnd) / 2 - width / 2
+  const left = Math.min(Math.max(centered, 900), w - width - 100)
   return { size, left: Math.round(left) }
 }
 

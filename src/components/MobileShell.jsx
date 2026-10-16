@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Icon from './Icon'
 import Swatches from './Swatches'
-import Avatar from './Avatar'
+import Avatar, { AVATAR_ASPECT } from './Avatar'
 import { cards, CareerBody, MoodTag, YouTubeBody } from './Widgets'
 import { useApp } from '../context'
 import { palettes } from '../palettes'
@@ -42,7 +42,7 @@ export default function MobileShell({ apps }) {
     const measure = () => {
       const r = el.getBoundingClientRect()
       // deixa folga em cima para o plumbob e o balão de fala
-      setSize(Math.max(160, Math.floor(Math.min(r.width, r.height / 1.22, 380))))
+      setSize(Math.max(200, Math.floor(Math.min(r.height / 1.2, r.width / AVATAR_ASPECT, 470))))
     }
     measure()
     const ro = new ResizeObserver(measure)
