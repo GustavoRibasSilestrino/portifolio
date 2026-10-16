@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { career, contact, location, music, statusCard, ui, weatherQuips, widgetText } from '../data'
+import { career, contact, location, music, ui, weatherQuips, widgetText } from '../data'
 import { useApp } from '../context'
+import { moodFor, NEEDS, needColor, needValue, useHour } from '../mood'
 import Icon from './Icon'
 
 // ---------- dados reais ----------
@@ -217,28 +218,41 @@ function WeatherBody() {
   )
 }
 
+// Humor atual (aparece no cabeçalho do card de necessidades).
+export function MoodTag() {
+  const { t } = useApp()
+  const mood = moodFor(useHour())
+  return <span className="ml-auto shrink-0 text-[10px] opacity-70">{t(mood.label)}</span>
+}
+
+// Necessidades no estilo do Sims: barras que mudam ao longo do dia (verde = bem, amarelo = atenção, vermelho = crítico).
 function StatusBody() {
   const { t } = useApp()
-  // nível de café segue a hora em São Paulo: manhã cheio, noite quase vazio
-  const hour = Number(
-    new Date().toLocaleString('en-US', { timeZone: 'America/Sao_Paulo', hour: 'numeric', hour12: false }),
-  )
-  const level = hour >= 5 && hour < 12 ? 3 : hour >= 12 && hour < 18 ? 2 : hour >= 18 ? 1 : 0
+  const hour = useHour()
   return (
-    <>
-      <p className="text-sm font-medium leading-snug">{t(statusCard.text)}</p>
-      <div className="mt-3 flex items-center justify-between text-[11px] opacity-70">
-        <span>{t(statusCard.coffee)}</span>
-        <span className="flex gap-1">
-          {[0, 1, 2].map((i) => (
-            <span
-              key={i}
-              className={`h-2.5 w-2.5 rounded-full border border-ink ${i < level ? 'bg-ink' : ''}`}
-            />
-          ))}
-        </span>
-      </div>
-    </>
+    <div className="space-y-1.5">
+      {NEEDS.map((n) => {
+        const v = needValue(n, hour)
+        return (
+          <div key={n.id} className="flex items-center gap-2 text-[11px]">
+            <span className="w-12 shrink-0 font-medium opacity-80">{t(n.label)}</span>
+            <div
+              role="progressbar"
+              aria-label={t(n.label)}
+              aria-valuenow={v}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              className="h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-ink/15"
+            >
+              <div
+                className="h-full rounded-full transition-all duration-700"
+                style={{ width: `${v}%`, background: needColor(v) }}
+              />
+            </div>
+          </div>
+        )
+      })}
+    </div>
   )
 }
 
@@ -630,7 +644,8 @@ export default function Widgets() {
     >
       <div className="flex items-center gap-1.5 border-b border-ink/10 px-2 py-1.5 text-[11px] font-medium opacity-80">
         <Icon name="grip" size={12} />
-        <span className="flex-1 truncate">{t(c.title)}</span>
+        <span className={c.id === 'status' ? 'truncate' : 'flex-1 truncate'}>{t(c.title)}</span>
+        {c.id === 'status' && <MoodTag />}
         <button
           onPointerDown={(e) => e.stopPropagation()}
           onClick={() => remove(c.id)}

@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import Icon from './Icon'
 import Swatches from './Swatches'
 import Avatar from './Avatar'
-import { cards, CareerBody, YouTubeBody } from './Widgets'
+import { cards, CareerBody, MoodTag, YouTubeBody } from './Widgets'
 import { useApp } from '../context'
 import { palettes } from '../palettes'
 import { career, credits, cv, music, profile, ui } from '../data'
@@ -41,7 +41,8 @@ export default function MobileShell({ apps }) {
     if (!el) return
     const measure = () => {
       const r = el.getBoundingClientRect()
-      setSize(Math.max(160, Math.floor(Math.min(r.width, r.height, 380))))
+      // deixa folga em cima para o plumbob e o balão de fala
+      setSize(Math.max(160, Math.floor(Math.min(r.width, r.height / 1.22, 380))))
     }
     measure()
     const ro = new ResizeObserver(measure)
@@ -125,6 +126,7 @@ export default function MobileShell({ apps }) {
                       <div className="flex items-center gap-1.5 border-b border-ink/10 px-3 py-1.5 text-[11px] font-medium opacity-80">
                         <Icon name="grip" size={12} />
                         <span className="truncate">{t(c.title)}</span>
+                        {c.id === 'status' && <MoodTag />}
                       </div>
                       <div className="p-3">
                         <c.Body />

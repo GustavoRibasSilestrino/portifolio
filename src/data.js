@@ -210,14 +210,6 @@ export const career = {
   sinceText: { pt: 'programando desde', en: 'coding since' },
 }
 
-export const statusCard = {
-  text: {
-    pt: 'Estudando Java, um commit mais claro por vez.',
-    en: 'Studying Java, one clearer commit at a time.',
-  },
-  coffee: { pt: 'Nível de café', en: 'Coffee level' },
-}
-
 // Playlist do card "Tocando agora". Coloque os .mp3 em public/musicas e liste aqui.
 // Ex.: { title: 'Nome', artist: 'Artista', src: '/musicas/nome.mp3' }. Vazio = o card fica oculto.
 export const music = {
@@ -229,7 +221,7 @@ export const music = {
 export const widgetText = {
   career: { pt: 'Tempo de estrada', en: 'Time on the road' },
   weather: { pt: `${location.city} agora`, en: `${location.city} now` },
-  status: { pt: 'Status', en: 'Status' },
+  status: { pt: 'Necessidades', en: 'Needs' },
   github: { pt: 'Última atividade no GitHub', en: 'Latest GitHub activity' },
   music: { pt: 'Tocando agora', en: 'Now playing' },
   years: { pt: 'anos', en: 'years' },

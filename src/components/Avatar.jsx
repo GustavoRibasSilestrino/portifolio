@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { useApp } from '../context'
 import { ui } from '../data'
+import { moodFor, PLUMBOB, useHour } from '../mood'
 
 const PORTRAIT = '/avatar-portrait.webp'
 
@@ -56,12 +57,76 @@ function Hand() {
   )
 }
 
-// Avatar 2D animado: a cabeça acompanha o mouse, o corpo respira, os olhos piscam e,
-// ao clicar, ele balança a cabeça e acena com a mão.
+// Plumbob: o diamante do Sims. Gira em 3D (dois planos cruzados), flutua e brilha; a cor muda com o humor.
+function Plumbob({ palette, size, x, y }) {
+  const c = PLUMBOB[palette]
+  const w = size * 0.085
+  const h = size * 0.16
+  const faces = (
+    <svg viewBox="0 0 60 100" width="100%" height="100%" aria-hidden="true">
+      <polygon points="30,0 6,48 30,58" fill={c.a} />
+      <polygon points="30,0 54,48 30,58" fill={c.b} />
+      <polygon points="30,100 6,48 30,58" fill={c.c} />
+      <polygon points="30,100 54,48 30,58" fill={c.d} />
+    </svg>
+  )
+  return (
+    <motion.div
+      aria-hidden="true"
+      className="pointer-events-none absolute left-1/2"
+      style={{ x, y, width: w, height: h, top: -h - size * 0.015, marginLeft: -w / 2 }}
+    >
+      <motion.div
+        className="h-full w-full"
+        style={{ filter: `drop-shadow(0 0 ${size * 0.03}px ${c.glow})` }}
+        animate={{ y: [0, -size * 0.02, 0] }}
+        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+      >
+        <div className="h-full w-full" style={{ perspective: 400 }}>
+          <motion.div
+            className="relative h-full w-full"
+            style={{ transformStyle: 'preserve-3d' }}
+            animate={{ rotateY: 360 }}
+            transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+          >
+            <div className="absolute inset-0">{faces}</div>
+            <div className="absolute inset-0" style={{ transform: 'rotateY(90deg)' }}>
+              {faces}
+            </div>
+          </motion.div>
+        </div>
+      </motion.div>
+    </motion.div>
+  )
+}
+
+// "z z z" subindo, quando o avatar está sonolento (madrugada)
+function Zzz({ size }) {
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute" style={{ left: size * 0.64, top: size * 0.02 }}>
+      {[0, 1, 2].map((i) => (
+        <motion.span
+          key={i}
+          className="absolute font-display font-bold"
+          style={{ fontSize: size * (0.045 + 0.016 * i), left: i * size * 0.035, top: -i * size * 0.05, color: 'rgb(var(--c-ink))' }}
+          animate={{ opacity: [0, 0.85, 0], y: [4, -10] }}
+          transition={{ duration: 2.4, repeat: Infinity, delay: i * 0.55 }}
+        >
+          z
+        </motion.span>
+      ))}
+    </div>
+  )
+}
+
+// Avatar 2D animado: a cabeça acompanha o mouse, o corpo respira, os olhos piscam e, ao clicar,
+// ele balança a cabeça e acena com a mão. No estilo Sims: tem plumbob e humor que muda com a hora.
 export default function Avatar({ size = 340 }) {
   const S = size // lado do avatar na tela (px)
   const { t } = useApp()
+  const mood = moodFor(useHour())
   const [waving, setWaving] = useState(false)
+  const [hop, setHop] = useState(false)
   const [blink, setBlink] = useState(false)
   const box = useRef(null)
 
@@ -87,19 +152,41 @@ export default function Avatar({ size = 340 }) {
     return () => window.removeEventListener('pointermove', move)
   }, [mx, my])
 
-  // piscadas em intervalos irregulares
+  // piscadas em intervalos irregulares (sonolento: mais lentas e mais frequentes)
+  const sleepy = mood.id === 'sleepy'
   useEffect(() => {
     let timer
+    let off
     const loop = () => {
-      timer = setTimeout(() => {
-        setBlink(true)
-        setTimeout(() => setBlink(false), 140)
-        loop()
-      }, 2200 + Math.random() * 3400)
+      timer = setTimeout(
+        () => {
+          setBlink(true)
+          off = setTimeout(() => setBlink(false), sleepy ? 380 : 140)
+          loop()
+        },
+        sleepy ? 1600 + Math.random() * 1800 : 2200 + Math.random() * 3400,
+      )
     }
     loop()
-    return () => clearTimeout(timer)
-  }, [])
+    return () => {
+      clearTimeout(timer)
+      clearTimeout(off)
+    }
+  }, [sleepy])
+
+  // animado (manhã): um pulinho de vez em quando
+  useEffect(() => {
+    if (!mood.bounce) return
+    let off
+    const id = setInterval(() => {
+      setHop(true)
+      off = setTimeout(() => setHop(false), 800)
+    }, 7000)
+    return () => {
+      clearInterval(id)
+      clearTimeout(off)
+    }
+  }, [mood.bounce])
 
   const wave = () => {
     if (waving) return
@@ -109,25 +196,31 @@ export default function Avatar({ size = 340 }) {
 
   return (
     <div className="relative" style={{ width: S, height: S }}>
-      <AnimatePresence>
-        {waving && (
-          <motion.div
-            initial={{ opacity: 0, y: 8, scale: 0.8 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0 }}
-            className="box absolute -top-6 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap px-3 py-1 text-xs [--depth:4px]"
-          >
-            {t(ui.wave)}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* balão de fala, acima do plumbob */}
+      <div className="absolute left-1/2 z-10 -translate-x-1/2" style={{ top: -S * 0.27 }}>
+        <AnimatePresence>
+          {waving && (
+            <motion.div
+              initial={{ opacity: 0, y: 8, scale: 0.8 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0 }}
+              className="box whitespace-nowrap px-3 py-1 text-xs [--depth:4px]"
+            >
+              {t(ui.wave)}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      <Plumbob palette={mood.plumbob} size={S} x={headX} y={headY} />
+      {mood.zzz && <Zzz size={S} />}
 
       <motion.button
         ref={box}
         onClick={wave}
         aria-label={t(ui.clickMe)}
         className="absolute inset-0 select-none"
-        animate={waving ? { y: [0, -10, 0, -5, 0] } : { y: 0 }}
+        animate={waving ? { y: [0, -10, 0, -5, 0] } : hop ? { y: [0, -8, 0, -3, 0] } : { y: 0 }}
         transition={{ duration: 0.9 }}
         whileTap={{ scale: 0.99 }}
       >
@@ -185,8 +278,9 @@ export default function Avatar({ size = 340 }) {
                   background: SKIN,
                   boxShadow: 'inset 0 -1.5px 0 rgba(70,28,16,.75)',
                   transformOrigin: '50% 0%',
-                  transform: `scaleY(${blink ? 1 : 0})`,
-                  transition: 'transform 70ms ease-out',
+                  // pálpebra: fechada na piscada; no resto do tempo depende do humor (sonolento = meio fechada)
+                  transform: `scaleY(${blink ? 1 : mood.lid})`,
+                  transition: `transform ${sleepy ? 220 : 70}ms ease-out`,
                 }}
               />
             ))}
