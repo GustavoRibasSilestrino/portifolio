@@ -28,7 +28,7 @@ export default function Taskbar({ apps, open, minimized, onOpen, onTask }) {
   }, [])
 
   return (
-    <div className="absolute inset-x-0 bottom-0 z-[9999] flex h-11 items-center gap-2 border-t-2 border-ink bg-bar px-2 text-onbar">
+    <div className="absolute inset-x-0 bottom-0 z-[9999] flex h-11 items-center gap-2 border-t border-onbar/15 bg-bar px-2 text-onbar">
       <div ref={startRef} className="relative">
         {menu && (
           <div className="box absolute bottom-10 left-0 w-52 p-1 text-ink">

@@ -5,7 +5,7 @@ import Icon from './Icon'
 import Terminal from './Terminal'
 
 const Tag = ({ children }) => (
-  <span className="rounded border border-ink px-1.5 py-0.5 text-[10px]">{children}</span>
+  <span className="rounded border border-ink/30 bg-ink/5 px-1.5 py-0.5 text-[10px]">{children}</span>
 )
 
 const Label = ({ children }) => (
@@ -58,7 +58,7 @@ export function AboutPanel() {
 export function ExperiencePanel() {
   const { t } = useApp()
   return (
-    <div className="space-y-5 border-l-2 border-ink pl-4">
+    <div className="space-y-5 border-l-2 border-accent/60 pl-4">
       {timeline.map((item, i) => (
         <div key={i}>
           <div className="text-[10px] uppercase opacity-60">{t(item.when)}</div>
@@ -76,7 +76,7 @@ export function ProjectsPanel() {
   return (
     <div className="space-y-3">
       {projects.map((p, i) => (
-        <div key={i} className="rounded border-2 border-ink p-3">
+        <div key={i} className="box mb-1 mr-1.5 p-3 [--depth:5px]">
           <div className="font-bold">{t(p.name)}</div>
           <p className="my-1 text-xs opacity-80">{t(p.desc)}</p>
           <div className="flex flex-wrap gap-1.5">
@@ -148,7 +148,7 @@ export function ContactPanel() {
           href={l.href}
           target={l.href.startsWith('mailto:') ? undefined : '_blank'}
           rel="noreferrer"
-          className="flex items-center gap-2 rounded border-2 border-ink px-3 py-2 font-medium hover:bg-ink hover:text-paper"
+          className="box mb-1 mr-1.5 flex items-center gap-2 px-3 py-2 font-medium transition [--depth:5px] hover:!bg-ink hover:text-paper"
         >
           <Icon name={l.icon} size={16} />
           {l.label}

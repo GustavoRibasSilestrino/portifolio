@@ -30,8 +30,12 @@ const mix = (a, b, t) => {
 }
 
 function colorsFor(p, mode) {
+  // back = preenchimento do "segundo card" atrás do principal; edge = contorno discreto dos cards
   if (mode === 'light') {
-    return { ink: p.ink, mid: p.mid, bg: p.bg, card: p.card, accent: p.accent, bar: p.ink, onbar: p.bg, shadow: p.ink }
+    return {
+      ink: p.ink, mid: p.mid, bg: p.bg, card: p.card, accent: p.accent,
+      bar: p.ink, onbar: p.bg, shadow: p.ink, back: p.ink, edge: p.ink,
+    }
   }
   // escuro: fundo e cards saem do tom escuro da paleta; o texto usa o fundo claro dela
   return {
@@ -43,6 +47,8 @@ function colorsFor(p, mode) {
     bar: mix(p.ink, '#ffffff', 0.12),
     onbar: p.bg,
     shadow: '#000000',
+    back: mix(p.ink, '#000000', 0.7),
+    edge: p.mid,
   }
 }
 

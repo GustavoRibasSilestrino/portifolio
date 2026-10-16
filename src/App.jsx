@@ -64,7 +64,7 @@ export default function App() {
       <div className="absolute left-3 top-3 z-10 flex max-h-[calc(100%-64px)] flex-col gap-2 overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {apps.map((a) => (
           <button key={a.id} onClick={() => openApp(a.id)} className="group flex w-[72px] shrink-0 flex-col items-center gap-1">
-            <span className="box grid h-11 w-11 place-items-center transition group-hover:bg-ink group-hover:text-paper">
+            <span className="box grid h-11 w-11 place-items-center transition [--depth:3px] group-hover:!bg-ink group-hover:text-paper">
               <Icon name={a.icon} size={22} />
             </span>
             <span className="text-center text-[10px] leading-tight">{t(a.title)}</span>
@@ -80,7 +80,7 @@ export default function App() {
       </div>
 
       <Widgets />
-      <div className="absolute bottom-11 right-[230px] hidden md:block">
+      <div className="absolute bottom-11 right-[120px] hidden md:block">
         <Avatar />
       </div>
 

@@ -1,7 +1,6 @@
 import { Component, lazy, Suspense, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useApp } from '../context'
-import { getColors } from '../palettes'
 import { ui } from '../data'
 
 // A cena 3D (three.js) é pesada: só carrega depois do resto da página.
@@ -10,15 +9,17 @@ const AvatarScene = lazy(() => import('./AvatarScene'))
 // Rosto do avatar (usado como foto de perfil na janela "Sobre mim").
 export function Face({ className = '' }) {
   return (
-    <svg viewBox="40 30 110 130" className={className} aria-hidden="true">
-      <path d="M45 170 V170 Q45 140 95 140 Q145 140 145 170 Z" className="fill-accent stroke-ink" strokeWidth="4" />
-      <rect x="82" y="120" width="26" height="26" fill="#f1c9a5" className="stroke-ink" strokeWidth="4" />
-      <circle cx="95" cy="85" r="44" fill="#f1c9a5" className="stroke-ink" strokeWidth="4" />
-      <path d="M51 80 Q50 36 95 38 Q140 36 139 80 Q120 58 95 60 Q70 58 51 80 Z" fill="#2b1d14" className="stroke-ink" strokeWidth="4" strokeLinejoin="round" />
-      <circle cx="78" cy="88" r="5" className="fill-ink" />
-      <circle cx="112" cy="88" r="5" className="fill-ink" />
-      <path d="M80 106 Q95 120 110 106" className="stroke-ink" strokeWidth="4" fill="none" strokeLinecap="round" />
-    </svg>
+    <div
+      role="img"
+      aria-label="Gustavo"
+      className={className}
+      style={{
+        backgroundImage: 'url(/avatar-portrait.webp)',
+        backgroundSize: '215%',
+        backgroundPosition: '41% 0%',
+        backgroundRepeat: 'no-repeat',
+      }}
+    />
   )
 }
 
@@ -66,9 +67,8 @@ class Boundary extends Component {
 }
 
 export default function Avatar() {
-  const { t, palette, mode } = useApp()
+  const { t } = useApp()
   const [waving, setWaving] = useState(false)
-  const shirt = getColors(palette, mode).accent
 
   const wave = () => {
     if (waving) return
@@ -93,14 +93,14 @@ export default function Avatar() {
         )}
       </AnimatePresence>
 
-      <div className="h-[300px] w-[320px]">
+      <span className="mb-1 text-[10px] opacity-60">{t(ui.clickMe)}</span>
+      <div className="h-[340px] w-[340px]">
         <Boundary fallback={fallback}>
           <Suspense fallback={fallback}>
-            <AvatarScene waving={waving} onWave={wave} shirt={shirt} />
+            <AvatarScene waving={waving} onWave={wave} />
           </Suspense>
         </Boundary>
       </div>
-      <span className="text-[10px] opacity-60">{t(ui.clickMe)}</span>
     </div>
   )
 }

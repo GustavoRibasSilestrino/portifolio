@@ -401,7 +401,7 @@ export default function Widgets() {
       style={{ width: c.width ?? 230 }}
       className="box pointer-events-auto relative z-[5] cursor-grab overflow-hidden active:cursor-grabbing"
     >
-      <div className="flex items-center gap-1.5 border-b border-ink/20 px-2 py-1.5 text-[11px] font-medium opacity-80">
+      <div className="flex items-center gap-1.5 border-b border-ink/10 px-2 py-1.5 text-[11px] font-medium opacity-80">
         <Icon name="grip" size={12} />
         <span className="flex-1 truncate">{t(c.title)}</span>
         <button
@@ -419,23 +419,19 @@ export default function Widgets() {
     </motion.div>
   )
 
-  const visible = (col) => cards.filter((c) => c.col === col && !removed.includes(c.id))
-
   return (
     <div className="pointer-events-none absolute inset-0 hidden lg:block">
-      <div className="absolute right-[380px] top-6 flex flex-col items-end gap-4">
-        <AnimatePresence>{visible('a').map(renderCard)}</AnimatePresence>
-      </div>
-      <div className="absolute right-4 top-[210px] flex flex-col items-end gap-4">
-        <AnimatePresence>{visible('b').map(renderCard)}</AnimatePresence>
+      {/* todos os cards começam juntos, na lateral esquerda, ao lado dos ícones */}
+      <div className="absolute left-[100px] top-5 flex flex-col items-start gap-5">
+        <AnimatePresence>{cards.filter((c) => !removed.includes(c.id)).map(renderCard)}</AnimatePresence>
       </div>
 
       <button
         ref={trash}
         onClick={() => setRemoved([])}
         title={removed.length ? t(ui.trashRestore) : t(ui.trash)}
-        className={`pointer-events-auto absolute bottom-14 right-4 z-[6] flex flex-col items-center gap-0.5 rounded-lg border-2 border-ink/70 p-2 transition ${
-          overTrash ? 'scale-110 bg-ink text-paper' : 'bg-card/85 backdrop-blur-sm'
+        className={`box pointer-events-auto absolute bottom-14 right-5 z-[6] flex flex-col items-center gap-0.5 p-2 transition [--depth:4px] ${
+          overTrash ? 'scale-110 !bg-ink text-paper' : ''
         }`}
       >
         <Icon name="trash" size={22} />

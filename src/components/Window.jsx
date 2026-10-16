@@ -20,6 +20,8 @@ function Ctrl({ icon, label, onClick, hover = 'hover:bg-onbar/20' }) {
 
 export default function Window({ title, icon, index, zIndex, minimized, onFocus, onClose, onMinimize, children, width = 520 }) {
   const { t } = useApp()
+  // em telas largas os cards ocupam a esquerda; as janelas abrem à direita deles
+  const [baseLeft] = useState(() => (typeof window !== 'undefined' && window.innerWidth >= 1024 ? 360 : 90))
   const controls = useDragControls()
   const x = useMotionValue(0)
   const y = useMotionValue(0)
@@ -40,7 +42,7 @@ export default function Window({ title, icon, index, zIndex, minimized, onFocus,
 
   const layout = max
     ? { left: 0, top: 0, width: '100%', height: 'calc(100% - 44px)' }
-    : { left: 90 + index * 28, top: 20 + index * 28, width, maxWidth: 'calc(100vw - 100px)', maxHeight: '78vh' }
+    : { left: baseLeft + index * 28, top: 20 + index * 28, width, maxWidth: `calc(100vw - ${baseLeft + 10}px)`, maxHeight: '78vh' }
 
   return (
     <motion.div
@@ -54,7 +56,7 @@ export default function Window({ title, icon, index, zIndex, minimized, onFocus,
       transition={{ duration: 0.15 }}
       onPointerDown={onFocus}
       style={{ x, y, zIndex, visibility: minimized ? 'hidden' : 'visible', ...layout }}
-      className={`box absolute flex flex-col overflow-hidden ${max ? '!rounded-none' : ''}`}
+      className={`box absolute flex flex-col overflow-hidden ${max ? '!rounded-none [--depth:0px]' : ''}`}
     >
       <div
         onPointerDown={(e) => !max && controls.start(e)}
