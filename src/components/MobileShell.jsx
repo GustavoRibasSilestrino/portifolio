@@ -84,7 +84,12 @@ export default function MobileShell({ apps }) {
         {/* cards em carrossel horizontal */}
         <div className="-mx-5 flex snap-x snap-mandatory gap-3 overflow-x-auto px-5 pb-5 pt-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {visibleCards.map((c) => (
-            <div key={c.id} className="box max-h-[190px] w-[78vw] max-w-[320px] shrink-0 snap-center overflow-hidden [--depth:5px]">
+            <div
+              key={c.id}
+              className={`box w-[78vw] max-w-[320px] shrink-0 snap-center overflow-hidden [--depth:5px] ${
+                c.id === 'musica' ? '' : 'max-h-[190px]'
+              }`}
+            >
               <div className="flex items-center gap-1.5 border-b border-ink/10 px-3 py-1.5 text-[11px] font-medium opacity-80">
                 <Icon name="grip" size={12} />
                 <span className="truncate">{t(c.title)}</span>

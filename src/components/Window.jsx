@@ -21,7 +21,7 @@ function Ctrl({ icon, label, onClick, hover = 'hover:bg-onbar/20' }) {
 export default function Window({ title, icon, index, zIndex, minimized, onFocus, onClose, onMinimize, children, width = 520 }) {
   const { t } = useApp()
   // em telas largas os cards ocupam a esquerda; as janelas abrem à direita deles
-  const [baseLeft] = useState(() => (typeof window !== 'undefined' && window.innerWidth >= 1024 ? 360 : 90))
+  const [baseLeft] = useState(() => (typeof window !== 'undefined' && window.innerWidth >= 1024 ? 376 : 90))
   const controls = useDragControls()
   const x = useMotionValue(0)
   const y = useMotionValue(0)

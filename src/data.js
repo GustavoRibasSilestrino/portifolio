@@ -203,15 +203,19 @@ export const career = {
 
 export const statusCard = {
   text: {
-    pt: 'Agora estou estudando Java e tentando deixar o código mais claro a cada commit.',
-    en: "Right now I'm studying Java and trying to make my code a bit clearer with every commit.",
+    pt: 'Estudando Java, um commit mais claro por vez.',
+    en: 'Studying Java, one clearer commit at a time.',
   },
   coffee: { pt: 'Nível de café', en: 'Coffee level' },
 }
 
 // Playlist do card "Tocando agora". Coloque os .mp3 em public/musicas e liste aqui.
 // Ex.: { title: 'Nome', artist: 'Artista', src: '/musicas/nome.mp3' }. Vazio = o card fica oculto.
-export const music = { playlist: [] }
+export const music = {
+  // Música do YouTube (player oficial incorporado). Para trocar, mude o id (o trecho depois de "v=" ou de "youtu.be/").
+  youtube: { id: 'ZQb45qINuj8', title: 'Purifícame', artist: 'Jonathan Napoles' },
+  playlist: [],
+}
 
 export const widgetText = {
   career: { pt: 'Tempo de estrada', en: 'Time on the road' },
@@ -248,6 +252,7 @@ export const ui = {
   start: { pt: 'Iniciar', en: 'Start' },
   trash: { pt: 'Lixeira', en: 'Trash' },
   trashRestore: { pt: 'Clique para restaurar os cards', en: 'Click to restore the cards' },
+  play: { pt: 'Tocar', en: 'Play' },
   palette: { pt: 'Paleta de cores', en: 'Color palette' },
   darkMode: { pt: 'Mudar para o tema escuro', en: 'Switch to dark theme' },
   lightMode: { pt: 'Mudar para o tema claro', en: 'Switch to light theme' },

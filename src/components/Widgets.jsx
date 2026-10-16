@@ -160,9 +160,9 @@ function WeatherBody() {
   const quip = weatherQuips.find((q) => w.temp < q.max)
   const pos = Math.min(Math.max((w.temp - 5) / 35, 0), 1) * 100
   return (
-    <div className="space-y-2">
+    <div className="space-y-1.5">
       <div className="flex items-center gap-3">
-        <Icon name={weatherIcon(w.code, w.day)} size={36} />
+        <Icon name={weatherIcon(w.code, w.day)} size={30} />
         <div>
           <div className="text-2xl font-semibold leading-none">{Math.round(w.temp)}°C</div>
           <div className="mt-1 text-[10px] opacity-70">
@@ -250,7 +250,56 @@ const fmt = (s) => {
   return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`
 }
 
+// Player oficial do YouTube (sem baixar nada: o vídeo continua no YouTube e conta como visualização).
+// Começa compacto (capa + título + botão). Ao clicar em tocar, o vídeo abre e começa a tocar.
+function YouTubeBody() {
+  const { t } = useApp()
+  const { id, title, artist } = music.youtube
+  const [open, setOpen] = useState(false)
+  return (
+    <div>
+      <div className="flex items-center gap-3">
+        <img
+          src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`}
+          alt=""
+          draggable={false}
+          className="h-12 w-12 shrink-0 rounded-md border border-ink/20 object-cover"
+        />
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-sm font-semibold">{title}</div>
+          <div className="truncate text-xs opacity-60">{artist}</div>
+        </div>
+        <button
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={() => setOpen((o) => !o)}
+          aria-label={t(open ? ui.close : ui.play)}
+          title={t(open ? ui.close : ui.play)}
+          className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent text-card"
+        >
+          <Icon name={open ? 'x' : 'play'} size={18} />
+        </button>
+      </div>
+      {open && (
+        <div className="mt-3 aspect-video w-full overflow-hidden rounded-md border border-ink/20 bg-black">
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
+            title={`${title} · ${artist}`}
+            className="h-full w-full"
+            allow="autoplay; encrypted-media; picture-in-picture"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+          />
+        </div>
+      )}
+    </div>
+  )
+}
+
 function MusicBody() {
+  return music.youtube?.id ? <YouTubeBody /> : <PlaylistBody />
+}
+
+function PlaylistBody() {
   const list = music.playlist
   const audio = useRef(null)
   const [i, setI] = useState(0)
@@ -363,7 +412,7 @@ function MusicBody() {
 export const cards = [
   { id: 'estrada', col: 'a', title: widgetText.career, enabled: !!career.since, Body: CareerBody },
   { id: 'clima', col: 'a', title: widgetText.weather, enabled: true, Body: WeatherBody },
-  { id: 'musica', col: 'a', title: widgetText.music, enabled: music.playlist.length > 0, width: 300, Body: MusicBody },
+  { id: 'musica', col: 'a', title: widgetText.music, enabled: !!music.youtube?.id || music.playlist.length > 0, width: 264, Body: MusicBody },
   { id: 'status', col: 'b', title: widgetText.status, enabled: true, Body: StatusBody },
   { id: 'github', col: 'b', title: widgetText.github, enabled: true, Body: GithubBody },
 ].filter((c) => c.enabled)
@@ -413,7 +462,7 @@ export default function Widgets() {
           ×
         </button>
       </div>
-      <div className="p-3">
+      <div className="p-2.5">
         <c.Body />
       </div>
     </motion.div>
@@ -422,7 +471,7 @@ export default function Widgets() {
   return (
     <div className="pointer-events-none absolute inset-0 hidden lg:block">
       {/* todos os cards começam juntos, na lateral esquerda, ao lado dos ícones */}
-      <div className="absolute left-[100px] top-5 flex flex-col items-start gap-5">
+      <div className="absolute left-[100px] top-3 flex flex-col items-start gap-3">
         <AnimatePresence>{cards.filter((c) => !removed.includes(c.id)).map(renderCard)}</AnimatePresence>
       </div>
 
