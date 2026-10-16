@@ -280,7 +280,7 @@ function GithubBody() {
         href={`https://github.com/${g.repo}`}
         target="_blank"
         rel="noreferrer"
-        className="mt-1 block truncate text-xs text-accent underline-offset-2 hover:underline"
+        className="mt-1 block truncate py-1 text-xs text-accent underline-offset-2 hover:underline"
       >
         {g.repo}
       </a>

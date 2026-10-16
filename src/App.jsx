@@ -34,7 +34,8 @@ const apps = [
 
 // celular: abaixo de 768px usamos a versão com barra inferior e apps em tela cheia
 function useIsMobile() {
-  const query = '(max-width: 767px)'
+  // celular em pé (largura pequena) ou deitado (tela de toque com pouca altura)
+  const query = '(max-width: 767px), (max-height: 500px) and (pointer: coarse)'
   const [mobile, setMobile] = useState(() => window.matchMedia(query).matches)
   useEffect(() => {
     const mq = window.matchMedia(query)

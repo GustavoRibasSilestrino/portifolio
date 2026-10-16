@@ -68,7 +68,7 @@ export default function Terminal() {
           autoFocus
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          className="flex-1 bg-transparent text-onbar outline-none"
+          className="flex-1 bg-transparent text-onbar outline-none max-md:text-[16px]"
           spellCheck="false"
           aria-label="terminal"
         />

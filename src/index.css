@@ -9,6 +9,47 @@
   [role='button'] {
     cursor: default;
   }
+  /* toque: sem o "flash" cinza ao tocar e sem atraso de duplo toque */
+  button,
+  a,
+  input,
+  [role='button'] {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+}
+
+/* Celular: altura da barra inferior (menor com o aparelho deitado) e tela inicial em duas colunas quando deitado. */
+.mobile-shell {
+  --nav-h: calc(4rem + env(safe-area-inset-bottom));
+}
+.mobile-home {
+  display: flex;
+  flex-direction: column;
+}
+@media (max-height: 500px) {
+  .mobile-shell {
+    --nav-h: calc(3.25rem + env(safe-area-inset-bottom));
+  }
+  .mobile-home {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    column-gap: 1rem;
+  }
+  .mobile-home .home-title {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .mobile-home .home-stage {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+  .mobile-home .home-cards {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: end;
+  }
 }
 
 :root {

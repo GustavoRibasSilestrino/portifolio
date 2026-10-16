@@ -70,22 +70,24 @@ export default function MobileShell({ apps }) {
   const MusicCard = music.youtube?.id ? YouTubeBody : null
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-hidden">
-      {/* tela inicial */}
-      <div className="flex min-h-0 flex-1 flex-col px-5 pt-6">
-        <h1 className="font-display text-[clamp(2rem,8.5vw,3rem)] font-bold leading-[0.92] tracking-[-0.025em] text-ink/85">
-          Gustavo
-          <br />
-          Ribas
-        </h1>
-        <p className="mt-2 text-xs opacity-70">{t(profile.role)}</p>
+    <div className="mobile-shell relative flex h-full w-full flex-col overflow-hidden">
+      {/* tela inicial (celular deitado: nome e cards à esquerda, avatar à direita) */}
+      <div className="mobile-home min-h-0 flex-1 px-5 pt-6">
+        <div className="home-title">
+          <h1 className="font-display text-[clamp(2rem,8.5vw,3rem)] font-bold leading-[0.92] tracking-[-0.025em] text-ink/85">
+            Gustavo
+            <br />
+            Ribas
+          </h1>
+          <p className="mt-2 text-xs opacity-70">{t(profile.role)}</p>
+        </div>
 
-        <div ref={stage} className="flex min-h-0 flex-1 items-end justify-center overflow-hidden">
+        <div ref={stage} className="home-stage flex min-h-0 flex-1 items-end justify-center overflow-hidden">
           <Avatar size={size} />
         </div>
 
         {/* dois cards compactos empilhados, como no portfólio de referência */}
-        <div className="space-y-2.5 pb-5 pt-3">
+        <div className="home-cards space-y-2.5 pb-5 pt-3">
           {career.since && (
             <div className="box p-3 [--depth:4px]">
               <CareerBody compact />
@@ -108,7 +110,7 @@ export default function MobileShell({ apps }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 24 }}
             transition={{ duration: 0.18 }}
-            className="absolute inset-x-0 top-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 flex flex-col bg-card"
+            className="absolute inset-x-0 top-0 bottom-[var(--nav-h)] z-20 flex flex-col bg-card"
           >
             <header className="flex items-center gap-3 bg-bar px-4 py-3.5 text-onbar">
               <Icon name={app.icon} size={20} />
@@ -159,7 +161,7 @@ export default function MobileShell({ apps }) {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', stiffness: 380, damping: 36 }}
-              className="absolute inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-30 max-h-[80%] overflow-y-auto rounded-t-2xl border border-ink/20 bg-card p-5"
+              className="absolute inset-x-0 bottom-[var(--nav-h)] z-30 max-h-[80%] overflow-y-auto rounded-t-2xl border border-ink/20 bg-card p-5"
             >
               <div className="mb-3 font-display text-xl font-bold">{profile.name}</div>
               <div className="grid grid-cols-2 gap-x-4">
@@ -242,7 +244,7 @@ export default function MobileShell({ apps }) {
                 href={credits.url}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-4 block text-center text-[11px] opacity-60"
+                className="mt-2 block py-3 text-center text-[11px] opacity-60"
               >
                 {t(credits.label)} <span className="font-semibold underline">{credits.name}</span>
               </a>
@@ -253,7 +255,7 @@ export default function MobileShell({ apps }) {
 
       {/* barra inferior */}
       <nav
-        className={`relative z-40 grid h-[calc(4rem+env(safe-area-inset-bottom))] shrink-0 border-t border-onbar/15 bg-bar pb-[env(safe-area-inset-bottom)] text-onbar ${
+        className={`relative z-40 grid h-[var(--nav-h)] shrink-0 border-t border-onbar/15 bg-bar pb-[env(safe-area-inset-bottom)] text-onbar ${
           app ? 'grid-cols-3' : 'grid-cols-2'
         }`}
       >
