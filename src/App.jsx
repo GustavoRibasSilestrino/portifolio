@@ -4,107 +4,72 @@ import Window from './components/Window'
 import Taskbar from './components/Taskbar'
 import Avatar from './components/Avatar'
 import Widgets from './components/Widgets'
-import Terminal from './components/Terminal'
 import Icon from './components/Icon'
-import { profile, skills, projects, timeline, contact } from './data'
+import {
+  AboutPanel,
+  PhotoPanel,
+  ExperiencePanel,
+  ProjectsPanel,
+  WorkPanel,
+  ContactPanel,
+  TerminalPanel,
+  VolunteerPanel,
+  NowPanel,
+} from './components/Panels'
+import { profile } from './data'
+import { useApp } from './context'
 
-const Tag = ({ children }) => (
-  <span className="rounded border border-ink px-1.5 py-0.5 font-mono text-[10px]">{children}</span>
-)
-
+// Mesmas categorias do portfólio de referência, na mesma ordem.
 const apps = [
-  {
-    id: 'sobre', title: 'Sobre mim', icon: 'user',
-    body: () => (
-      <div className="space-y-3">
-        {profile.about.map((p, i) => <p key={i}>{p}</p>)}
-        <div className="flex flex-wrap gap-1.5 pt-1">
-          <Tag>{profile.age} anos</Tag><Tag>{profile.city}</Tag><Tag>{profile.school}</Tag>
-        </div>
-      </div>
-    ),
-  },
-  {
-    id: 'skills', title: 'Habilidades', icon: 'tools',
-    body: () => (
-      <div className="space-y-4">
-        {skills.map((g) => (
-          <div key={g.group}>
-            <div className="mb-1.5 font-mono text-[10px] uppercase tracking-wider opacity-60">{g.group}</div>
-            <div className="flex flex-wrap gap-1.5">{g.items.map((i) => <Tag key={i}>{i}</Tag>)}</div>
-          </div>
-        ))}
-      </div>
-    ),
-  },
-  {
-    id: 'projetos', title: 'Projetos', icon: 'folder',
-    body: () => (
-      <div className="space-y-3">
-        {projects.map((p) => (
-          <div key={p.name} className="rounded border-2 border-ink p-3">
-            <div className="font-bold">{p.name}</div>
-            <p className="my-1 text-xs opacity-80">{p.desc}</p>
-            <div className="flex flex-wrap gap-1.5">{p.tags.map((t) => <Tag key={t}>{t}</Tag>)}</div>
-          </div>
-        ))}
-      </div>
-    ),
-  },
-  {
-    id: 'formacao', title: 'Formação', icon: 'cap',
-    body: () => (
-      <div className="space-y-4 border-l-2 border-ink pl-4">
-        {timeline.map((t) => (
-          <div key={t.title}>
-            <div className="font-mono text-[10px] opacity-60">{t.when}</div>
-            <div className="font-bold">{t.title}</div>
-            <div className="text-xs opacity-70">{t.where}</div>
-            <p className="mt-1 text-xs">{t.text}</p>
-          </div>
-        ))}
-      </div>
-    ),
-  },
-  {
-    id: 'contato', title: 'Contato', icon: 'mail',
-    body: () => (
-      <div className="space-y-2">
-        <p>Quer conversar, trocar ideia ou me chamar para um projeto? Fala comigo:</p>
-        <a className="block underline" href={`mailto:${contact.email}`}>{contact.email}</a>
-        <a className="block underline" href={contact.github} target="_blank" rel="noreferrer">GitHub</a>
-        {contact.linkedin && (
-          <a className="block underline" href={contact.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
-        )}
-      </div>
-    ),
-  },
-  { id: 'terminal', title: 'Terminal', icon: 'terminal', width: 460, body: () => <Terminal /> },
+  { id: 'sobre', icon: 'user', title: { pt: 'Sobre mim', en: 'About me' }, Body: AboutPanel, width: 560 },
+  { id: 'foto', icon: 'camera', title: { pt: 'Fotografia', en: 'Photography' }, Body: PhotoPanel },
+  { id: 'exp', icon: 'briefcase', title: { pt: 'Experiência', en: 'Experience' }, Body: ExperiencePanel },
+  { id: 'projetos', icon: 'folder', title: { pt: 'Projetos', en: 'Projects' }, Body: ProjectsPanel },
+  { id: 'como', icon: 'compass', title: { pt: 'Como eu trabalho', en: 'How I work' }, Body: WorkPanel },
+  { id: 'contato', icon: 'mail', title: { pt: 'Contato', en: 'Contact' }, Body: ContactPanel, width: 440 },
+  { id: 'terminal', icon: 'terminal', title: { pt: 'Terminal', en: 'Terminal' }, Body: TerminalPanel, width: 480 },
+  { id: 'voluntariado', icon: 'heart', title: { pt: 'Voluntariado', en: 'Volunteering' }, Body: VolunteerPanel, width: 440 },
+  { id: 'agora', icon: 'sparkles', title: { pt: 'Agora', en: 'Now' }, Body: NowPanel, width: 480 },
 ]
 
 export default function App() {
+  const { t } = useApp()
   const [open, setOpen] = useState(['sobre'])
   const [order, setOrder] = useState(['sobre'])
+  const [minimized, setMinimized] = useState([])
 
   const focus = (id) => setOrder((o) => [...o.filter((x) => x !== id), id])
+  const restore = (id) => setMinimized((m) => m.filter((x) => x !== id))
+
   const openApp = (id) => {
     setOpen((o) => (o.includes(id) ? o : [...o, id]))
+    restore(id)
     focus(id)
   }
   const close = (id) => {
     setOpen((o) => o.filter((x) => x !== id))
     setOrder((o) => o.filter((x) => x !== id))
+    restore(id)
+  }
+  const minimize = (id) => setMinimized((m) => (m.includes(id) ? m : [...m, id]))
+
+  // clique na barra de tarefas: restaura, traz pra frente ou minimiza se já está na frente
+  const onTask = (id) => {
+    if (minimized.includes(id)) return openApp(id)
+    const visible = order.filter((x) => !minimized.includes(x))
+    if (visible[visible.length - 1] === id) return minimize(id)
+    focus(id)
   }
 
   return (
     <div className="relative h-full w-full overflow-hidden">
-      <div className="absolute left-3 top-3 z-10 flex flex-col gap-3">
+      <div className="scroll absolute left-3 top-3 z-10 flex max-h-[calc(100%-64px)] flex-col gap-2 overflow-y-auto pr-1">
         {apps.map((a) => (
-          <button key={a.id} onClick={() => openApp(a.id)} className="group flex w-16 flex-col items-center gap-1">
+          <button key={a.id} onClick={() => openApp(a.id)} className="group flex w-[72px] shrink-0 flex-col items-center gap-1">
             <span className="box grid h-11 w-11 place-items-center transition group-hover:bg-ink group-hover:text-paper">
               <Icon name={a.icon} size={22} />
             </span>
-            <span className="font-mono text-[10px]">{a.title}</span>
+            <span className="text-center font-mono text-[10px] leading-tight">{t(a.title)}</span>
           </button>
         ))}
       </div>
@@ -113,11 +78,13 @@ export default function App() {
         <h1 className="text-right text-4xl font-bold leading-[0.95] md:text-6xl">
           Gustavo<br />Ribas
         </h1>
-        <p className="text-right font-mono text-xs opacity-70">{profile.role}</p>
+        <p className="text-right font-mono text-xs opacity-70">{t(profile.role)}</p>
       </div>
 
       <Widgets />
-      <div className="absolute bottom-14 left-1/2 hidden -translate-x-1/2 md:block"><Avatar /></div>
+      <div className="absolute bottom-14 left-1/2 hidden -translate-x-1/2 md:block">
+        <Avatar />
+      </div>
 
       <AnimatePresence>
         {open.map((id, idx) => {
@@ -125,21 +92,23 @@ export default function App() {
           return (
             <Window
               key={id}
-              title={a.title}
+              title={t(a.title)}
               icon={a.icon}
               index={idx}
               width={a.width}
               zIndex={10 + order.indexOf(id)}
+              minimized={minimized.includes(id)}
               onFocus={() => focus(id)}
               onClose={() => close(id)}
+              onMinimize={() => minimize(id)}
             >
-              {a.body()}
+              <a.Body />
             </Window>
           )
         })}
       </AnimatePresence>
 
-      <Taskbar apps={apps} open={open} onOpen={openApp} onFocus={focus} />
+      <Taskbar apps={apps} open={open} minimized={minimized} onOpen={openApp} onTask={onTask} />
     </div>
   )
 }

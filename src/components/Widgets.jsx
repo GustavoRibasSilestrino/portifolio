@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { profile } from '../data'
+import { profile, ui, widgets } from '../data'
+import { useApp } from '../context'
 import Icon from './Icon'
 
 function useClock() {
   const [now, setNow] = useState(new Date())
   useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 1000)
-    return () => clearInterval(t)
+    const id = setInterval(() => setNow(new Date()), 1000)
+    return () => clearInterval(id)
   }, [])
   return now
 }
@@ -24,26 +25,29 @@ function LocalBody() {
 }
 
 function StudyBody() {
-  return [['Java', 'foco'], ['SQL', 'em andamento'], ['React', 'praticando']].map(([n, s]) => (
-    <div key={n} className="flex items-center justify-between border-b border-ink/15 py-1 text-xs last:border-0">
-      <span className="font-semibold">{n}</span>
-      <span className="rounded border border-ink px-1.5 py-0.5 font-mono text-[10px]">{s}</span>
+  const { t } = useApp()
+  return widgets.studyItems.map(([name, status]) => (
+    <div key={name} className="flex items-center justify-between border-b border-ink/15 py-1 text-xs last:border-0">
+      <span className="font-semibold">{name}</span>
+      <span className="rounded border border-ink px-1.5 py-0.5 font-mono text-[10px]">{t(status)}</span>
     </div>
   ))
 }
 
 function NoteBody() {
-  return <p className="text-xs">Hoje estou aprendendo Java e construindo meu portfólio. Um commit por dia.</p>
+  const { t } = useApp()
+  return <p className="text-xs">{t(widgets.noteText)}</p>
 }
 
 const cards = [
-  { id: 'local', title: 'Local', top: 200, Body: LocalBody },
-  { id: 'estudo', title: 'Estudando agora', top: 305, Body: StudyBody },
-  { id: 'nota', title: 'Nota', top: 470, Body: NoteBody },
+  { id: 'local', title: widgets.local, top: 200, Body: LocalBody },
+  { id: 'estudo', title: widgets.study, top: 305, Body: StudyBody },
+  { id: 'nota', title: widgets.note, top: 470, Body: NoteBody },
 ]
 
 // Cards soltos pela tela: arraste para qualquer lugar ou jogue na lixeira.
 export default function Widgets() {
+  const { t } = useApp()
   const [removed, setRemoved] = useState([])
   const [overTrash, setOverTrash] = useState(false)
   const trash = useRef(null)
@@ -77,16 +81,16 @@ export default function Widgets() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.3 }}
               style={{ top: c.top, right: 16, width: 230 }}
-              className="box pointer-events-auto absolute z-20 cursor-grab overflow-hidden active:cursor-grabbing"
+              className="box pointer-events-auto absolute z-[5] cursor-grab overflow-hidden active:cursor-grabbing"
             >
               <div className="flex items-center justify-between border-b-2 border-ink px-2.5 py-1">
                 <span className="font-mono text-[10px] uppercase tracking-wider">
-                  {String(cards.indexOf(c) + 1).padStart(2, '0')}. {c.title}
+                  {String(cards.indexOf(c) + 1).padStart(2, '0')}. {t(c.title)}
                 </span>
                 <button
                   onPointerDown={(e) => e.stopPropagation()}
                   onClick={() => remove(c.id)}
-                  aria-label={`Remover ${c.title}`}
+                  aria-label={`${t(ui.remove)} ${t(c.title)}`}
                   className="text-xs leading-none opacity-60 hover:opacity-100"
                 >
                   ×
@@ -102,14 +106,15 @@ export default function Widgets() {
       <button
         ref={trash}
         onClick={() => setRemoved([])}
-        title={removed.length ? 'Clique para restaurar os cards' : 'Lixeira'}
-        className={`pointer-events-auto absolute bottom-14 right-4 z-20 flex flex-col items-center gap-0.5 rounded-lg border-2 border-ink p-2 transition ${
-          overTrash ? 'scale-110 bg-ink text-paper' : 'bg-paper'
+        title={removed.length ? t(ui.trashRestore) : t(ui.trash)}
+        className={`pointer-events-auto absolute bottom-14 right-4 z-[5] flex flex-col items-center gap-0.5 rounded-lg border-2 border-ink p-2 transition ${
+          overTrash ? 'scale-110 bg-ink text-paper' : 'bg-card'
         }`}
       >
         <Icon name="trash" size={22} />
         <span className="font-mono text-[10px]">
-          Lixeira{removed.length ? ` (${removed.length})` : ''}
+          {t(ui.trash)}
+          {removed.length ? ` (${removed.length})` : ''}
         </span>
       </button>
     </div>

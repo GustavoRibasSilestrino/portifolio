@@ -1,32 +1,43 @@
 import { useState, useRef, useEffect } from 'react'
-import { profile, skills, projects, contact } from '../data'
+import { profile, skills, projects, contact, now, ui } from '../data'
+import { useApp } from '../context'
 
-const run = (cmd) => {
-  switch (cmd) {
-    case 'help':
-      return 'Comandos: sobre, skills, projetos, contato, whoami, clear'
-    case 'whoami':
-      return `${profile.name} · ${profile.age} anos · ${profile.city}`
-    case 'sobre':
-      return `${profile.role}\n${profile.school}`
-    case 'skills':
-      return skills.map((s) => `${s.group}: ${s.items.join(', ')}`).join('\n')
-    case 'projetos':
-      return projects.map((p) => `- ${p.name}`).join('\n')
-    case 'contato':
-      return [`email: ${contact.email}`, `github: ${contact.github}`, contact.linkedin && `linkedin: ${contact.linkedin}`]
-        .filter(Boolean)
-        .join('\n')
-    default:
-      return `comando não encontrado: ${cmd} (digite "help")`
-  }
-}
+const aliases = { about: 'sobre', projects: 'projetos', contact: 'contato', now: 'agora' }
 
 export default function Terminal() {
-  const [lines, setLines] = useState([{ t: 'out', v: 'Bem-vindo! Digite "help" para ver os comandos.' }])
+  const { t } = useApp()
+  const [lines, setLines] = useState([{ k: 'out', v: ui.termWelcome }])
   const [value, setValue] = useState('')
   const end = useRef(null)
-  useEffect(() => end.current?.scrollIntoView(), [lines])
+  useEffect(() => {
+    end.current?.scrollIntoView()
+  }, [lines])
+
+  // Saídas guardam o texto (ou o objeto {pt,en}) e são traduzidas ao renderizar,
+  // assim trocar o idioma atualiza o que já está na tela.
+  const run = (raw) => {
+    const cmd = aliases[raw] ?? raw
+    switch (cmd) {
+      case 'help':
+        return ui.termHelp
+      case 'whoami':
+        return `${profile.name} · ${profile.age} · ${profile.city}`
+      case 'sobre':
+        return { fn: () => `${t(profile.role)}\n${profile.school}` }
+      case 'skills':
+        return { fn: () => skills.map((s) => `${t(s.group)}: ${s.items.map(t).join(', ')}`).join('\n') }
+      case 'projetos':
+        return { fn: () => projects.map((p) => `- ${t(p.name)}`).join('\n') }
+      case 'agora':
+        return { fn: () => now.items.map((i) => `${t(i.label)}: ${t(i.text)}`).join('\n') }
+      case 'contato':
+        return `email: ${contact.email}\ngithub: ${contact.github}\nlinkedin: ${contact.linkedin}`
+      default:
+        return { fn: () => t(ui.termNotFound).replace('{cmd}', raw) }
+    }
+  }
+
+  const render = (v) => (v && typeof v === 'object' && v.fn ? v.fn() : t(v))
 
   const submit = (e) => {
     e.preventDefault()
@@ -34,23 +45,26 @@ export default function Terminal() {
     setValue('')
     if (!cmd) return
     if (cmd === 'clear') return setLines([])
-    setLines((l) => [...l, { t: 'in', v: cmd }, { t: 'out', v: run(cmd) }])
+    setLines((l) => [...l, { k: 'in', v: cmd }, { k: 'out', v: run(cmd) }])
   }
 
   return (
-    <div className="-m-4 min-h-[220px] bg-ink p-3 font-mono text-xs text-green-300">
+    <div className="-m-5 min-h-[240px] bg-ink p-4 font-mono text-xs text-green-300">
       {lines.map((l, i) => (
-        <pre key={i} className={`whitespace-pre-wrap ${l.t === 'in' ? 'text-paper' : ''}`}>
-          {l.t === 'in' ? '$ ' : ''}{l.v}
+        <pre key={i} className={`whitespace-pre-wrap ${l.k === 'in' ? 'text-paper' : ''}`}>
+          {l.k === 'in' ? '$ ' : ''}
+          {l.k === 'in' ? l.v : render(l.v)}
         </pre>
       ))}
       <form onSubmit={submit} className="flex gap-2">
         <span className="text-paper">$</span>
         <input
+          autoFocus
           value={value}
           onChange={(e) => setValue(e.target.value)}
           className="flex-1 bg-transparent text-paper outline-none"
           spellCheck="false"
+          aria-label="terminal"
         />
       </form>
       <div ref={end} />

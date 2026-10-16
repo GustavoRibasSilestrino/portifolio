@@ -2,12 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --c-ink: 27 36 48;
+  --c-mid: 124 155 181;
+  --c-bg: 241 244 247;
+  --c-card: 250 251 252;
+  --c-accent: 14 124 134;
+}
+
 html, body, #root { height: 100%; }
 body {
   @apply bg-paper text-ink font-sans overflow-hidden;
-  background-image: radial-gradient(rgba(28, 28, 26, 0.16) 1.2px, transparent 1.2px);
+  background-image: radial-gradient(rgb(var(--c-ink) / 0.16) 1.2px, transparent 1.2px);
   background-size: 24px 24px;
 }
-.box { @apply bg-paper border-2 border-ink rounded-lg shadow-[3px_3px_0_0_#1c1c1a]; }
+.box {
+  background: rgb(var(--c-card));
+  border: 2px solid rgb(var(--c-ink));
+  border-radius: 0.5rem;
+  box-shadow: 3px 3px 0 0 rgb(var(--c-ink));
+}
 .scroll::-webkit-scrollbar { width: 8px; }
-.scroll::-webkit-scrollbar-thumb { background: #1c1c1a; border-radius: 4px; }
+.scroll::-webkit-scrollbar-thumb { background: rgb(var(--c-ink)); border-radius: 4px; }
