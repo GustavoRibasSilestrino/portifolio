@@ -152,27 +152,23 @@ export default function Avatar({ size = 340 }) {
     return () => window.removeEventListener('pointermove', move)
   }, [mx, my])
 
-  // piscadas em intervalos irregulares (sonolento: mais lentas e mais frequentes)
-  const sleepy = mood.id === 'sleepy'
+  // piscadas normais, em intervalos irregulares (os olhos ficam sempre abertos entre uma piscada e outra)
   useEffect(() => {
     let timer
     let off
     const loop = () => {
-      timer = setTimeout(
-        () => {
-          setBlink(true)
-          off = setTimeout(() => setBlink(false), sleepy ? 380 : 140)
-          loop()
-        },
-        sleepy ? 1600 + Math.random() * 1800 : 2200 + Math.random() * 3400,
-      )
+      timer = setTimeout(() => {
+        setBlink(true)
+        off = setTimeout(() => setBlink(false), 140)
+        loop()
+      }, 2200 + Math.random() * 3400)
     }
     loop()
     return () => {
       clearTimeout(timer)
       clearTimeout(off)
     }
-  }, [sleepy])
+  }, [])
 
   // animado (manhã): um pulinho de vez em quando
   useEffect(() => {
@@ -278,9 +274,8 @@ export default function Avatar({ size = 340 }) {
                   background: SKIN,
                   boxShadow: 'inset 0 -1.5px 0 rgba(70,28,16,.75)',
                   transformOrigin: '50% 0%',
-                  // pálpebra: fechada na piscada; no resto do tempo depende do humor (sonolento = meio fechada)
-                  transform: `scaleY(${blink ? 1 : mood.lid})`,
-                  transition: `transform ${sleepy ? 220 : 70}ms ease-out`,
+                  transform: `scaleY(${blink ? 1 : 0})`,
+                  transition: 'transform 70ms ease-out',
                 }}
               />
             ))}

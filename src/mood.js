@@ -62,12 +62,12 @@ export const needValue = (need, hour) => Math.round(curve(need.pts, hour))
 // cor da barra, como no Sims: verde (bem), amarelo (atenção), vermelho (crítico)
 export const needColor = (v) => (v >= 60 ? '#4ade80' : v >= 30 ? '#fbbf24' : '#f87171')
 
-// Humor do avatar. lid = quanto as pálpebras ficam fechadas (0 a 1).
+// Humor do avatar: muda a cor do plumbob, o "zzz" e o pulinho (os olhos ficam sempre normais).
 export function moodFor(hour) {
-  if (hour < 6) return { id: 'sleepy', label: { pt: 'sonolento', en: 'sleepy' }, lid: 0.5, plumbob: 'amber', zzz: true }
-  if (hour < 12) return { id: 'energized', label: { pt: 'animado', en: 'energized' }, lid: 0, plumbob: 'green', bounce: true }
-  if (hour < 22) return { id: 'focused', label: { pt: 'focado', en: 'focused' }, lid: 0.06, plumbob: 'green' }
-  return { id: 'tired', label: { pt: 'cansado', en: 'tired' }, lid: 0.3, plumbob: 'lime' }
+  if (hour < 6) return { id: 'sleepy', label: { pt: 'sonolento', en: 'sleepy' }, plumbob: 'amber', zzz: true }
+  if (hour < 12) return { id: 'energized', label: { pt: 'animado', en: 'energized' }, plumbob: 'green', bounce: true }
+  if (hour < 22) return { id: 'focused', label: { pt: 'focado', en: 'focused' }, plumbob: 'green' }
+  return { id: 'tired', label: { pt: 'cansado', en: 'tired' }, plumbob: 'lime' }
 }
 
 // cores do plumbob (diamante do Sims) por humor: [face clara, face média, face escura, brilho]
