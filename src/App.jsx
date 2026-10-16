@@ -82,7 +82,7 @@ export default function App() {
       <CursorTrail />
       <div className="absolute left-3 top-3 z-10 flex max-h-[calc(100%-64px)] flex-col gap-2 overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {apps.map((a) => (
-          <button key={a.id} onClick={() => openApp(a.id)} className="group flex w-[72px] shrink-0 flex-col items-center gap-1">
+          <button key={a.id} onClick={() => openApp(a.id)} className="group flex w-[72px] shrink-0 flex-col items-center gap-2">
             <span className="box grid h-11 w-11 place-items-center transition [--depth:3px] group-hover:!bg-ink group-hover:text-paper">
               <Icon name={a.icon} size={22} />
             </span>
