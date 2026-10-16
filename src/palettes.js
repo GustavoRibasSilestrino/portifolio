@@ -46,9 +46,12 @@ function colorsFor(p, mode) {
   }
 }
 
+export function getColors(id, mode) {
+  return colorsFor(palettes.find((x) => x.id === id) ?? palettes[0], mode)
+}
+
 export function applyPalette(id, mode) {
-  const p = palettes.find((x) => x.id === id) ?? palettes[0]
-  const colors = colorsFor(p, mode)
+  const colors = getColors(id, mode)
   const root = document.documentElement.style
   for (const [k, v] of Object.entries(colors)) root.setProperty(`--c-${k}`, triplet(v))
   root.colorScheme = mode
