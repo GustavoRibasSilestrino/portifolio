@@ -6,7 +6,7 @@ import Avatar from './Avatar'
 import { cards } from './Widgets'
 import { useApp } from '../context'
 import { palettes } from '../palettes'
-import { credits, profile, ui } from '../data'
+import { credits, cv, profile, ui } from '../data'
 
 function Tab({ icon, label, on, onClick }) {
   return (
@@ -165,6 +165,17 @@ export default function MobileShell({ apps }) {
               </div>
 
               <hr className="my-3 border-ink/15" />
+
+              {cv.url && (
+                <a
+                  href={cv.url}
+                  download={cv.filename}
+                  className="mb-3 flex items-center gap-3 rounded-lg border border-ink/20 px-3 py-3 text-[15px] font-medium active:bg-ink/10"
+                >
+                  <Icon name="download" size={20} />
+                  {t(ui.downloadCv)}
+                </a>
+              )}
 
               <div className="flex flex-wrap items-center gap-3">
                 <div role="group" aria-label={t(ui.language)} className="flex overflow-hidden rounded-lg border border-ink/20 text-sm font-bold">

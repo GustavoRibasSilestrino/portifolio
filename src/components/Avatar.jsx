@@ -199,13 +199,16 @@ export default function Avatar({ size = 340 }) {
             <motion.div
               key="hand"
               className="pointer-events-none absolute"
-              style={{ right: 6, bottom: -14, transformOrigin: '50% 100%' }}
+              style={{ right: 6 * (S / 340), bottom: -14 * (S / 340), transformOrigin: '50% 100%' }}
               initial={{ y: 110, opacity: 0 }}
               animate={{ y: 0, opacity: 1, rotate: [0, -16, 16, -16, 16, -10, 0] }}
               exit={{ y: 110, opacity: 0 }}
               transition={{ y: { duration: 0.28 }, opacity: { duration: 0.2 }, rotate: { duration: 1.2, delay: 0.25 } }}
             >
-              <Hand />
+              {/* a mão cresce junto com o avatar */}
+              <div style={{ transform: `scale(${S / 340})`, transformOrigin: '50% 100%' }}>
+                <Hand />
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

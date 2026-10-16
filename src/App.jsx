@@ -45,12 +45,36 @@ function useIsMobile() {
   return mobile
 }
 
+// tamanho da janela do navegador (para o avatar crescer em telas grandes)
+function useViewport() {
+  const [v, setV] = useState({ w: window.innerWidth, h: window.innerHeight })
+  useEffect(() => {
+    const on = () => setV({ w: window.innerWidth, h: window.innerHeight })
+    window.addEventListener('resize', on)
+    return () => window.removeEventListener('resize', on)
+  }, [])
+  return v
+}
+
+// O avatar ocupa o espaço vazio do centro: cresce com a tela (até 560px) e fica entre a janela
+// "Sobre mim" (termina perto de x = 940) e o canto direito, sem passar da lixeira.
+function avatarLayout({ w, h }) {
+  const size = Math.round(Math.min(Math.max(340, w * 0.28), 560, (h - 140) * 0.9))
+  const freeStart = 940
+  const freeEnd = w * 0.78
+  const centered = (freeStart + freeEnd) / 2 - size / 2
+  const left = Math.min(Math.max(centered, 880), w - size - 100)
+  return { size, left: Math.round(left) }
+}
+
 export default function App() {
   const { t } = useApp()
   const isMobile = useIsMobile()
+  const avatar = avatarLayout(useViewport())
   const [open, setOpen] = useState(['sobre'])
   const [order, setOrder] = useState(['sobre'])
   const [minimized, setMinimized] = useState([])
+  const [layoutKey, setLayoutKey] = useState(0)
 
   const focus = (id) => setOrder((o) => [...o.filter((x) => x !== id), id])
   const restore = (id) => setMinimized((m) => m.filter((x) => x !== id))
@@ -66,6 +90,14 @@ export default function App() {
     restore(id)
   }
   const minimize = (id) => setMinimized((m) => (m.includes(id) ? m : [...m, id]))
+
+  // volta tudo ao início: só "Sobre mim" aberta, janelas e cards nas posições originais, lixeira vazia
+  const resetLayout = () => {
+    setOpen(['sobre'])
+    setOrder(['sobre'])
+    setMinimized([])
+    setLayoutKey((k) => k + 1)
+  }
 
   // clique na barra de tarefas: restaura, traz pra frente ou minimiza se já está na frente
   const onTask = (id) => {
@@ -98,9 +130,9 @@ export default function App() {
         <p className="text-right text-xs opacity-70">{t(profile.role)}</p>
       </div>
 
-      <Widgets />
-      <div className="absolute bottom-11 right-[120px] hidden md:block">
-        <Avatar />
+      <Widgets key={layoutKey} />
+      <div className="absolute bottom-11 hidden md:block" style={{ left: avatar.left }}>
+        <Avatar size={avatar.size} />
       </div>
 
       <AnimatePresence>
@@ -108,7 +140,7 @@ export default function App() {
           const a = apps.find((x) => x.id === id)
           return (
             <Window
-              key={id}
+              key={`${layoutKey}-${id}`}
               title={t(a.title)}
               icon={a.icon}
               index={idx}
@@ -125,7 +157,7 @@ export default function App() {
         })}
       </AnimatePresence>
 
-      <Taskbar apps={apps} open={open} minimized={minimized} onOpen={openApp} onTask={onTask} />
+      <Taskbar apps={apps} open={open} minimized={minimized} onOpen={openApp} onTask={onTask} onReset={resetLayout} />
     </div>
   )
 }

@@ -3,9 +3,9 @@ import Icon from './Icon'
 import Swatches from './Swatches'
 import { useApp } from '../context'
 import { palettes } from '../palettes'
-import { credits, ui } from '../data'
+import { credits, cv, profile, ui } from '../data'
 
-export default function Taskbar({ apps, open, minimized, onOpen, onTask }) {
+export default function Taskbar({ apps, open, minimized, onOpen, onTask, onReset }) {
   const { lang, setLang, mode, setMode, palette, setPalette, t } = useApp()
   const [menu, setMenu] = useState(false)
   const [pal, setPal] = useState(false)
@@ -32,23 +32,63 @@ export default function Taskbar({ apps, open, minimized, onOpen, onTask }) {
     <div className="absolute inset-x-0 bottom-0 z-[9999] flex h-11 items-center gap-2 border-t border-onbar/15 bg-bar px-2 text-onbar">
       <div ref={startRef} className="relative">
         {menu && (
-          <div className="box absolute bottom-10 left-0 w-52 p-1 text-ink">
-            {apps.map((a) => (
+          <div className="box absolute bottom-10 left-0 w-64 overflow-hidden text-ink [--depth:5px]">
+            <div className="border-b border-ink/10 px-4 py-3">
+              <div className="font-display text-base font-bold leading-tight">{profile.name}</div>
+              <div className="mt-0.5 text-xs opacity-60">{t(profile.role)}</div>
+            </div>
+
+            <div className="px-2 py-2">
+              <div className="px-2.5 pb-1 text-[11px] opacity-60">{t(ui.sections)}</div>
+              {apps.map((a) => (
+                <button
+                  key={a.id}
+                  onClick={() => {
+                    onOpen(a.id)
+                    setMenu(false)
+                  }}
+                  className="flex w-full items-center gap-3 rounded-md px-2.5 py-2 text-left text-sm hover:bg-ink/10"
+                >
+                  <Icon name={a.icon} size={16} />
+                  <span className="flex-1">{t(a.title)}</span>
+                  {/* ponto = app aberto */}
+                  {open.includes(a.id) && <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-label="aberto" />}
+                </button>
+              ))}
+            </div>
+
+            <div className="border-t border-ink/10 px-2 py-2">
+              <div className="px-2.5 pb-1 text-[11px] opacity-60">{t(ui.system)}</div>
+              {cv.url && (
+                <a
+                  href={cv.url}
+                  download={cv.filename}
+                  onClick={() => setMenu(false)}
+                  className="flex w-full items-center gap-3 rounded-md px-2.5 py-2 text-left text-sm hover:bg-ink/10"
+                >
+                  <Icon name="download" size={16} />
+                  {t(ui.downloadCv)}
+                </a>
+              )}
               <button
-                key={a.id}
                 onClick={() => {
-                  onOpen(a.id)
+                  onReset()
                   setMenu(false)
                 }}
-                className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm hover:bg-ink hover:text-paper"
+                className="flex w-full items-center gap-3 rounded-md px-2.5 py-2 text-left text-sm hover:bg-ink/10"
               >
-                <Icon name={a.icon} size={16} />
-                {t(a.title)}
+                <Icon name="reset" size={16} />
+                {t(ui.resetLayout)}
               </button>
-            ))}
+            </div>
           </div>
         )}
-        <button onClick={() => setMenu((m) => !m)} className="rounded bg-accent px-3 py-1 text-sm font-bold text-card">
+        <button
+          onClick={() => setMenu((m) => !m)}
+          aria-expanded={menu}
+          className="flex items-center gap-2 rounded bg-accent px-2.5 py-1 text-sm font-bold text-card"
+        >
+          <span className="grid h-5 w-5 place-items-center rounded bg-card text-[9px] font-bold text-accent">GR</span>
           {t(ui.start)}
         </button>
       </div>

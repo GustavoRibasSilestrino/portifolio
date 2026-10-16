@@ -256,6 +256,13 @@ export const weatherQuips = [
   { max: Infinity, pt: 'Calor demais. Até o processador pede arrego.', en: 'Way too hot. Even the CPU is begging for mercy.' },
 ]
 
+// Currículo para download. Coloque o PDF em public/ e informe o caminho em "url" (ex.: '/curriculo.pdf').
+// Enquanto "url" estiver vazio, o item "Baixar currículo" não aparece no menu.
+export const cv = {
+  url: '',
+  filename: 'Curriculo-Gustavo-Ribas-Silestrino.pdf',
+}
+
 // Crédito da inspiração do design
 export const credits = {
   label: { pt: 'Design inspirado em', en: 'Design inspired by' },
@@ -268,6 +275,10 @@ export const ui = {
   start: { pt: 'Iniciar', en: 'Start' },
   trash: { pt: 'Lixeira', en: 'Trash' },
   trashRestore: { pt: 'Clique para restaurar os cards', en: 'Click to restore the cards' },
+  sections: { pt: 'Seções', en: 'Sections' },
+  system: { pt: 'Sistema', en: 'System' },
+  downloadCv: { pt: 'Baixar currículo', en: 'Download résumé' },
+  resetLayout: { pt: 'Redefinir layout', en: 'Reset layout' },
   play: { pt: 'Tocar', en: 'Play' },
   pause: { pt: 'Pausar', en: 'Pause' },
   openYoutube: { pt: 'Abrir no YouTube', en: 'Open on YouTube' },
