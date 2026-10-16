@@ -118,7 +118,7 @@ export default function MobileShell({ apps }) {
               </button>
             </header>
             <div className="scroll flex-1 overflow-y-auto p-5 text-[15px] leading-relaxed">
-              <app.Body />
+              <app.Body onOpen={openApp} />
               {app.id === 'agora' && (
                 <div className="mt-6 space-y-4">
                   {extraCards.map((c) => (

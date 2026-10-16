@@ -66,15 +66,43 @@ export const projects = [
     },
     tags: ['Java', 'SQL'],
   },
-  {
-    name: { pt: 'Projeto do SENAI (em breve)', en: 'SENAI project (coming soon)' },
-    desc: {
-      pt: 'Um trabalho feito durante o curso de ADS entra aqui.',
-      en: 'A project made during the ADS course goes here.',
-    },
-    tags: ['ADS', 'SENAI'],
-  },
 ]
+
+// Projeto em destaque (estudo de caso). Informações do repositório github.com/GustavoRibasSilestrino/finsight
+// e do certificado de destaque do currículo.
+export const featured = {
+  name: 'Finsight',
+  award: {
+    pt: 'Top 3 da Mostra do SENAI · categoria Geral',
+    en: 'Top 3 at the SENAI Showcase · General category',
+  },
+  awardShort: { pt: 'Top 3 da Mostra do SENAI', en: 'Top 3 at the SENAI Showcase' },
+  tagline: { pt: 'Controle de finanças pessoais em um só lugar', en: 'Personal finance control in one place' },
+  team: 'Coders',
+  problem: {
+    pt: 'Ajudar a pessoa a registrar e acompanhar a própria vida financeira em um só lugar, com alertas que evitam o gasto sem controle.',
+    en: 'Help people record and track their own finances in one place, with alerts that prevent uncontrolled spending.',
+  },
+  features: [
+    { pt: 'Carteiras com saldo total', en: 'Wallets with a total balance' },
+    { pt: 'Receitas, despesas e transferências', en: 'Income, expenses and transfers' },
+    { pt: 'Categorias com ícone e cor', en: 'Categories with icon and color' },
+    { pt: 'Metas de poupança com progresso', en: 'Savings goals with progress' },
+    { pt: 'Painel com gráficos e notificações', en: 'Dashboard with charts and notifications' },
+    { pt: 'Relatórios por período', en: 'Reports by period' },
+  ],
+  stack: ['HTML5', 'CSS3', 'JavaScript', 'Java · Spring Boot', 'Supabase (PostgreSQL)', 'Vercel'],
+  role: {
+    pt: 'Integrante da equipe "Coders", no curso de ADS do SENAI Sorocaba.',
+    en: 'Member of the "Coders" team, in the ADS course at SENAI Sorocaba.',
+  },
+  // Conte aqui o que VOCÊ fez no projeto (ex.: telas, banco de dados, regras de negócio). Vazio = não aparece.
+  roleDetail: { pt: '', en: '' },
+  links: {
+    demo: 'https://finsight-app-lyart.vercel.app',
+    code: 'https://github.com/GustavoRibasSilestrino/finsight',
+  },
+}
 
 export const timeline = [
   {
@@ -272,6 +300,15 @@ export const ui = {
   downloadCv: { pt: 'Baixar currículo', en: 'Download résumé' },
   resetLayout: { pt: 'Redefinir layout', en: 'Reset layout' },
   expand: { pt: 'Expandir', en: 'Expand' },
+  caseStudy: { pt: 'Estudo de caso', en: 'Case study' },
+  seeCase: { pt: 'Ver estudo de caso', en: 'View case study' },
+  problem: { pt: 'Objetivo', en: 'Goal' },
+  whatItDoes: { pt: 'O que faz', en: 'What it does' },
+  techs: { pt: 'Tecnologias', en: 'Technologies' },
+  myRole: { pt: 'Meu papel', en: 'My role' },
+  viewOnline: { pt: 'Ver online', en: 'View online' },
+  viewCode: { pt: 'Ver código', en: 'View code' },
+  otherProjects: { pt: 'Outros projetos', en: 'Other projects' },
   play: { pt: 'Tocar', en: 'Play' },
   pause: { pt: 'Pausar', en: 'Pause' },
   openYoutube: { pt: 'Abrir no YouTube', en: 'Open on YouTube' },

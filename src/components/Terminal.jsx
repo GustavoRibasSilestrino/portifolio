@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { profile, skills, projects, contact, now, ui } from '../data'
+import { profile, skills, projects, featured, contact, now, ui } from '../data'
 import { useApp } from '../context'
 
 const aliases = { about: 'sobre', projects: 'projetos', contact: 'contato', now: 'agora' }
@@ -27,7 +27,10 @@ export default function Terminal() {
       case 'skills':
         return { fn: () => skills.map((s) => `${t(s.group)}: ${s.items.map(t).join(', ')}`).join('\n') }
       case 'projetos':
-        return { fn: () => projects.map((p) => `- ${t(p.name)}`).join('\n') }
+        return {
+          fn: () =>
+            [`- ${featured.name} (${t(featured.awardShort)})`, ...projects.map((p) => `- ${t(p.name)}`)].join('\n'),
+        }
       case 'agora':
         return { fn: () => now.items.map((i) => `${t(i.label)}: ${t(i.text)}`).join('\n') }
       case 'contato':

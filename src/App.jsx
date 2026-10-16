@@ -151,7 +151,7 @@ export default function App() {
               onClose={() => close(id)}
               onMinimize={() => minimize(id)}
             >
-              <a.Body />
+              <a.Body onOpen={openApp} />
             </Window>
           )
         })}

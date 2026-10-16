@@ -1,5 +1,5 @@
 import { useApp } from '../context'
-import { profile, skills, projects, timeline, habits, volunteering, now, contact, ui } from '../data'
+import { profile, skills, projects, featured, timeline, habits, volunteering, now, contact, ui } from '../data'
 import { Face } from './Avatar'
 import Icon from './Icon'
 import Terminal from './Terminal'
@@ -12,7 +12,7 @@ const Label = ({ children }) => (
   <div className="mb-1.5 text-[10px] uppercase tracking-wider opacity-60">{children}</div>
 )
 
-export function AboutPanel() {
+export function AboutPanel({ onOpen }) {
   const { t } = useApp()
   return (
     <div className="space-y-4">
@@ -29,6 +29,25 @@ export function AboutPanel() {
           <p className="text-sm opacity-70">{t(profile.headline)}</p>
         </div>
       </div>
+
+      {/* destaque: abre o estudo de caso em "Projetos" */}
+      <button
+        onClick={() => onOpen?.('projetos')}
+        className="box mb-1 mr-1.5 flex w-full items-center gap-3 !border-accent/60 px-3 py-2.5 text-left transition [--depth:4px] hover:!bg-accent/10"
+      >
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-accent text-card">
+          <Icon name="trophy" size={18} />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-sm font-semibold leading-tight">
+            {featured.name} · {t(featured.awardShort)}
+          </span>
+          <span className="block text-xs opacity-70">{t(ui.seeCase)}</span>
+        </span>
+        <span className="shrink-0 -rotate-90 text-accent">
+          <Icon name="chevron" size={18} />
+        </span>
+      </button>
 
       <div className="space-y-3">
         {profile.about.map((p, i) => (
@@ -71,10 +90,94 @@ export function ExperiencePanel() {
   )
 }
 
+const LinkButton = ({ href, icon, children }) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noreferrer"
+    className="inline-flex items-center gap-2 rounded-md border border-ink/30 px-3 py-1.5 text-xs font-semibold transition hover:bg-ink hover:text-paper"
+  >
+    <Icon name={icon} size={14} />
+    {children}
+  </a>
+)
+
+// Estudo de caso do projeto em destaque (Finsight): objetivo, o que faz, tecnologias, papel e links.
+function FeaturedCase() {
+  const { t } = useApp()
+  const f = featured
+  return (
+    <article className="box mb-1 mr-1.5 space-y-4 !border-accent/60 p-4 [--depth:6px]">
+      <header className="flex items-start gap-3">
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-accent text-card">
+          <Icon name="trophy" size={22} />
+        </span>
+        <div className="min-w-0">
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-accent">{t(ui.caseStudy)}</div>
+          <h3 className="font-display text-2xl font-bold leading-none">{f.name}</h3>
+          <p className="mt-1 text-xs opacity-70">{t(f.tagline)}</p>
+        </div>
+      </header>
+
+      <div className="inline-flex items-center gap-2 rounded-full border border-accent px-3 py-1 text-xs font-semibold">
+        <Icon name="trophy" size={13} />
+        {t(f.award)}
+      </div>
+
+      <section>
+        <Label>{t(ui.problem)}</Label>
+        <p>{t(f.problem)}</p>
+      </section>
+
+      <section>
+        <Label>{t(ui.whatItDoes)}</Label>
+        <ul className="grid gap-1 sm:grid-cols-2">
+          {f.features.map((item, i) => (
+            <li key={i} className="flex items-start gap-2 text-[13px] leading-snug">
+              <span className="mt-0.5 shrink-0 text-accent">
+                <Icon name="check" size={14} />
+              </span>
+              {t(item)}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section>
+        <Label>{t(ui.techs)}</Label>
+        <div className="flex flex-wrap gap-1.5">
+          {f.stack.map((s) => (
+            <Tag key={s}>{s}</Tag>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <Label>{t(ui.myRole)}</Label>
+        <p>{t(f.role)}</p>
+        {t(f.roleDetail) && <p className="mt-1 opacity-90">{t(f.roleDetail)}</p>}
+      </section>
+
+      <div className="flex flex-wrap gap-2 pt-1">
+        <LinkButton href={f.links.demo} icon="external">
+          {t(ui.viewOnline)}
+        </LinkButton>
+        <LinkButton href={f.links.code} icon="terminal">
+          {t(ui.viewCode)}
+        </LinkButton>
+      </div>
+    </article>
+  )
+}
+
 export function ProjectsPanel() {
   const { t } = useApp()
   return (
     <div className="space-y-3">
+      <FeaturedCase />
+      <div className="pt-2">
+        <Label>{t(ui.otherProjects)}</Label>
+      </div>
       {projects.map((p, i) => (
         <div key={i} className="box mb-1 mr-1.5 p-3 [--depth:5px]">
           <div className="font-bold">{t(p.name)}</div>
