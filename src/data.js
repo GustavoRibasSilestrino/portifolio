@@ -49,5 +49,5 @@ export const timeline = [
 export const contact = {
   email: 'gustavoribas.silestrino@gmail.com',
   github: 'https://github.com/GustavoRibasSilestrino',
-  linkedin: '', // adicione o link do seu perfil para o LinkedIn aparecer
+  linkedin: 'https://www.linkedin.com/in/gustavo-r-silestrino-b112ba38b/',
 }
