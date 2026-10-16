@@ -1,18 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { useApp } from '../context'
-import { ui } from '../data'
 import { moodFor, PLUMBOB, useHour } from '../mood'
 
-// Camadas do avatar 3D (todas com 420×660 px e o mesmo enquadramento):
+// Camadas do avatar 3D, da cintura para cima (as duas com 370×470 px e o mesmo enquadramento):
 //  head.webp       cabeça + pescoço (acompanha o mouse)
-//  body-rest.webp  corpo com os dois braços para baixo
-//  body-wave.webp  corpo com o braço levantado (sem antebraço e mão)
-//  forearm.webp    antebraço + mão (balança no cotovelo no tchau)
-const SRC = { w: 420, h: 660 }
+//  body-rest.webp  corpo com os braços para baixo
+const SRC = { w: 370, h: 470 }
 export const AVATAR_ASPECT = SRC.w / SRC.h // largura / altura
-const HEAD = { cx: 233, top: 22, neckY: 205 } // centro, topo da cabeça e pescoço (px das camadas)
-const ELBOW = { x: 45, y: 235 } // ponto de giro do antebraço
+const HEAD = { cx: 185, top: 10, neckY: 193 } // centro, topo da cabeça e pescoço (px das camadas)
 const LAYER = (name) => `/avatar/${name}.webp`
 
 // Foto de perfil da janela "Sobre mim": rosto recortado da foto real.
@@ -98,16 +94,16 @@ function Zzz({ left, top, scale }) {
   )
 }
 
-// Avatar 3D em camadas: a cabeça acompanha o mouse, o corpo respira e, ao clicar, o braço sobe e
-// balança no cotovelo (tchau). No estilo Sims: plumbob e humor que muda com a hora do dia.
+// Avatar 3D em camadas (da cintura para cima): a cabeça acompanha o mouse e o corpo respira.
+// No estilo Sims: plumbob e humor que muda com a hora do dia.
 // `size` é a ALTURA do avatar na tela (px); a largura segue a proporção das camadas.
-export default function Avatar({ size = 540 }) {
+export default function Avatar({ size = 440 }) {
   const S = size
   const Wd = S * AVATAR_ASPECT
   const k = S / SRC.h // escala das camadas para a tela
+  const fx = S / 600 // escala dos enfeites (plumbob e "zzz")
   const { t } = useApp()
   const mood = moodFor(useHour())
-  const [waving, setWaving] = useState(false)
   const [hop, setHop] = useState(false)
   const box = useRef(null)
 
@@ -116,8 +112,8 @@ export default function Avatar({ size = 540 }) {
   const my = useMotionValue(0)
   const sx = useSpring(mx, { stiffness: 110, damping: 16 })
   const sy = useSpring(my, { stiffness: 110, damping: 16 })
-  const headX = useTransform(sx, (v) => v * 5 * k * 1.4)
-  const headY = useTransform(sy, (v) => v * 3 * k * 1.4)
+  const headX = useTransform(sx, (v) => v * 6 * k)
+  const headY = useTransform(sy, (v) => v * 4 * k)
   const headRot = useTransform(sx, (v) => v * 3)
 
   useEffect(() => {
@@ -126,7 +122,7 @@ export default function Avatar({ size = 540 }) {
       const r = box.current?.getBoundingClientRect()
       if (!r) return
       mx.set(clamp((e.clientX - (r.left + r.width / 2)) / (window.innerWidth * 0.5)))
-      my.set(clamp((e.clientY - (r.top + r.height * 0.15)) / (window.innerHeight * 0.5)))
+      my.set(clamp((e.clientY - (r.top + r.height * 0.2)) / (window.innerHeight * 0.5)))
     }
     window.addEventListener('pointermove', move)
     return () => window.removeEventListener('pointermove', move)
@@ -146,50 +142,22 @@ export default function Avatar({ size = 540 }) {
     }
   }, [mood.bounce])
 
-  const wave = () => {
-    if (waving) return
-    setWaving(true)
-    setTimeout(() => setWaving(false), 2100)
-  }
-
   const headOrigin = `${(HEAD.cx / SRC.w) * 100}% ${(HEAD.neckY / SRC.h) * 100}%`
-  const elbowOrigin = `${(ELBOW.x / SRC.w) * 100}% ${(ELBOW.y / SRC.h) * 100}%`
-  const plumbobBottom = (HEAD.top - 12) * k
-  const fade = { transition: 'opacity 150ms ease-out' }
+  const plumbobBottom = (HEAD.top - 4) * k
   const layer = 'pointer-events-none absolute inset-0 h-full w-full select-none'
 
   return (
     <div className="relative" style={{ width: Wd, height: S }}>
-      {/* balão de fala, acima do plumbob */}
-      <div
-        className="absolute z-10 -translate-x-1/2"
-        style={{ left: HEAD.cx * k, top: plumbobBottom - 78 * k - 46 }}
-      >
-        <AnimatePresence>
-          {waving && (
-            <motion.div
-              initial={{ opacity: 0, y: 8, scale: 0.8 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0 }}
-              className="box whitespace-nowrap px-3 py-1 text-xs [--depth:4px]"
-            >
-              {t(ui.wave)}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+      <Plumbob palette={mood.plumbob} scale={fx} cx={HEAD.cx * k} bottom={plumbobBottom} x={headX} y={headY} />
+      {mood.zzz && <Zzz left={(HEAD.cx + 78) * k} top={(HEAD.top + 22) * k} scale={fx} />}
 
-      <Plumbob palette={mood.plumbob} scale={k} cx={HEAD.cx * k} bottom={plumbobBottom} x={headX} y={headY} />
-      {mood.zzz && <Zzz left={(HEAD.cx + 62) * k} top={HEAD.top * k + 14 * k} scale={k} />}
-
-      <motion.button
+      <motion.div
         ref={box}
-        onClick={wave}
-        aria-label={t(ui.clickMe)}
+        role="img"
+        aria-label={t({ pt: 'Avatar do Gustavo', en: "Gustavo's avatar" })}
         className="absolute inset-0 select-none"
-        animate={hop && !waving ? { y: [0, -10, 0, -4, 0] } : { y: 0 }}
+        animate={hop ? { y: [0, -10, 0, -4, 0] } : { y: 0 }}
         transition={{ duration: 0.9 }}
-        whileTap={{ scale: 0.995 }}
       >
         {/* respiração: o conjunto todo cresce um tiquinho a partir da base */}
         <motion.div
@@ -198,35 +166,14 @@ export default function Avatar({ size = 540 }) {
           animate={{ scaleY: [1, 1.006, 1] }}
           transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
         >
-          {/* braços para baixo (repouso) */}
-          <img src={LAYER('body-rest')} alt="" draggable={false} className={layer} style={{ opacity: waving ? 0 : 1, ...fade }} />
+          <img src={LAYER('body-rest')} alt="" draggable={false} className={layer} />
 
-          {/* braço levantado: corpo + antebraço que balança no cotovelo */}
-          <img src={LAYER('body-wave')} alt="" draggable={false} className={layer} style={{ opacity: waving ? 1 : 0, ...fade }} />
-          <motion.img
-            src={LAYER('forearm')}
-            alt=""
-            draggable={false}
-            className={layer}
-            style={{ transformOrigin: elbowOrigin, opacity: waving ? 1 : 0, ...fade }}
-            animate={waving ? { rotate: [0, -16, 14, -16, 14, -16, 12, -6, 0] } : { rotate: 0 }}
-            transition={{ duration: 1.8, delay: waving ? 0.15 : 0, ease: 'easeInOut' }}
-          />
-
-          {/* cabeça: gira sobre o pescoço seguindo o mouse e balança no tchau */}
+          {/* cabeça: gira sobre o pescoço seguindo o mouse */}
           <motion.div className="absolute inset-0" style={{ x: headX, y: headY, rotate: headRot, transformOrigin: headOrigin }}>
-            <motion.img
-              src={LAYER('head')}
-              alt=""
-              draggable={false}
-              className={layer}
-              style={{ transformOrigin: headOrigin }}
-              animate={waving ? { rotate: [0, -4, 4, -4, 4, -2, 0] } : { rotate: 0 }}
-              transition={{ duration: 1.6 }}
-            />
+            <img src={LAYER('head')} alt="" draggable={false} className={layer} />
           </motion.div>
         </motion.div>
-      </motion.button>
+      </motion.div>
     </div>
   )
 }
