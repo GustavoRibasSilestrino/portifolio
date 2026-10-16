@@ -3,7 +3,7 @@
 Portfólio em formato de **desktop de sistema operacional**: janelas arrastáveis, cards soltos, avatar animado,
 terminal, idioma PT/EN, tema claro/escuro e 9 paletas de cor. Também tem uma versão pensada para celular.
 
-🔗 **https://portifolio-ribas2.vercel.app**
+🔗 **https://gustavoribas.vercel.app**
 
 ## Créditos
 
