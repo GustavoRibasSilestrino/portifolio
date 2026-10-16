@@ -197,8 +197,8 @@ export const location = { city: 'São Paulo', lat: -23.55, lon: -46.63 }
 // "Tempo de estrada": contador desde que você começou a programar/estudar.
 // Preencha com a data real no formato 'AAAA-MM-DD' (ex.: '2024-02-01'). Vazio = o card fica oculto.
 export const career = {
-  since: '',
-  sinceText: { pt: 'estudando e programando desde', en: 'studying and coding since' },
+  since: '2024-02-01',
+  sinceText: { pt: 'programando desde', en: 'coding since' },
 }
 
 export const statusCard = {
