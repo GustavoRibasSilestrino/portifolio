@@ -5,6 +5,7 @@ import Taskbar from './components/Taskbar'
 import Avatar from './components/Avatar'
 import Widgets from './components/Widgets'
 import Terminal from './components/Terminal'
+import Icon from './components/Icon'
 import { profile, skills, projects, timeline, contact } from './data'
 
 const Tag = ({ children }) => (
@@ -13,7 +14,7 @@ const Tag = ({ children }) => (
 
 const apps = [
   {
-    id: 'sobre', title: 'Sobre mim', icon: '👤',
+    id: 'sobre', title: 'Sobre mim', icon: 'user',
     body: () => (
       <div className="space-y-3">
         {profile.about.map((p, i) => <p key={i}>{p}</p>)}
@@ -24,7 +25,7 @@ const apps = [
     ),
   },
   {
-    id: 'skills', title: 'Habilidades', icon: '🛠️',
+    id: 'skills', title: 'Habilidades', icon: 'tools',
     body: () => (
       <div className="space-y-4">
         {skills.map((g) => (
@@ -37,7 +38,7 @@ const apps = [
     ),
   },
   {
-    id: 'projetos', title: 'Projetos', icon: '📁',
+    id: 'projetos', title: 'Projetos', icon: 'folder',
     body: () => (
       <div className="space-y-3">
         {projects.map((p) => (
@@ -51,7 +52,7 @@ const apps = [
     ),
   },
   {
-    id: 'formacao', title: 'Formação', icon: '🎓',
+    id: 'formacao', title: 'Formação', icon: 'cap',
     body: () => (
       <div className="space-y-4 border-l-2 border-ink pl-4">
         {timeline.map((t) => (
@@ -66,7 +67,7 @@ const apps = [
     ),
   },
   {
-    id: 'contato', title: 'Contato', icon: '✉️',
+    id: 'contato', title: 'Contato', icon: 'mail',
     body: () => (
       <div className="space-y-2">
         <p>Quer conversar, trocar ideia ou me chamar para um projeto? Fala comigo:</p>
@@ -78,7 +79,7 @@ const apps = [
       </div>
     ),
   },
-  { id: 'terminal', title: 'Terminal', icon: '⌨️', width: 460, body: () => <Terminal /> },
+  { id: 'terminal', title: 'Terminal', icon: 'terminal', width: 460, body: () => <Terminal /> },
 ]
 
 export default function App() {
@@ -100,20 +101,22 @@ export default function App() {
       <div className="absolute left-3 top-3 z-10 flex flex-col gap-3">
         {apps.map((a) => (
           <button key={a.id} onClick={() => openApp(a.id)} className="group flex w-16 flex-col items-center gap-1">
-            <span className="box grid h-11 w-11 place-items-center text-xl group-hover:bg-accent/30">{a.icon}</span>
+            <span className="box grid h-11 w-11 place-items-center transition group-hover:bg-ink group-hover:text-paper">
+              <Icon name={a.icon} size={22} />
+            </span>
             <span className="font-mono text-[10px]">{a.title}</span>
           </button>
         ))}
       </div>
 
-      <h1 className="pointer-events-none absolute right-4 top-3 hidden text-right text-4xl font-bold leading-[0.95] sm:block md:text-6xl">
-        Gustavo<br />Ribas
-      </h1>
-      <p className="pointer-events-none absolute right-4 top-28 hidden text-right font-mono text-xs opacity-70 md:block">
-        {profile.role}
-      </p>
+      <div className="pointer-events-none absolute right-4 top-3 hidden flex-col items-end gap-2 sm:flex">
+        <h1 className="text-right text-4xl font-bold leading-[0.95] md:text-6xl">
+          Gustavo<br />Ribas
+        </h1>
+        <p className="text-right font-mono text-xs opacity-70">{profile.role}</p>
+      </div>
 
-      <div className="absolute right-4 top-40 hidden lg:block"><Widgets /></div>
+      <Widgets />
       <div className="absolute bottom-14 left-1/2 hidden -translate-x-1/2 md:block"><Avatar /></div>
 
       <AnimatePresence>

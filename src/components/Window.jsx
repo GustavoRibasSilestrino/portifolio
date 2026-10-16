@@ -1,4 +1,5 @@
 import { motion, useDragControls } from 'framer-motion'
+import Icon from './Icon'
 
 export default function Window({ title, icon, index, zIndex, onFocus, onClose, children, width = 440 }) {
   const controls = useDragControls()
@@ -20,7 +21,7 @@ export default function Window({ title, icon, index, zIndex, onFocus, onClose, c
         onPointerDown={(e) => controls.start(e)}
         className="flex cursor-grab touch-none select-none items-center gap-2 border-b-2 border-ink bg-ink px-3 py-1.5 text-paper active:cursor-grabbing"
       >
-        <span>{icon}</span>
+        <Icon name={icon} size={14} />
         <span className="flex-1 truncate font-mono text-xs">{title}</span>
         <button
           onPointerDown={(e) => e.stopPropagation()}

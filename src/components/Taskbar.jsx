@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import Icon from './Icon'
 
 export default function Taskbar({ apps, open, onOpen, onFocus }) {
   const [menu, setMenu] = useState(false)
@@ -19,7 +20,7 @@ export default function Taskbar({ apps, open, onOpen, onFocus }) {
                 onClick={() => { onOpen(a.id); setMenu(false) }}
                 className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm hover:bg-ink hover:text-paper"
               >
-                <span>{a.icon}</span>{a.title}
+                <Icon name={a.icon} size={16} />{a.title}
               </button>
             ))}
           </div>
@@ -33,7 +34,7 @@ export default function Taskbar({ apps, open, onOpen, onFocus }) {
           const a = apps.find((x) => x.id === id)
           return (
             <button key={id} onClick={() => onFocus(id)} className="flex shrink-0 items-center gap-1 rounded border border-paper/40 px-2 py-0.5 text-xs">
-              {a.icon} <span className="hidden sm:inline">{a.title}</span>
+              <Icon name={a.icon} size={14} /> <span className="hidden sm:inline">{a.title}</span>
             </button>
           )
         })}
