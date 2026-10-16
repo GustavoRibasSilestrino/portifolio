@@ -192,7 +192,7 @@ export const contact = {
 // ---- Cards da tela ----
 
 // Cidade usada no card de clima (dados reais do Open-Meteo, sem chave de API).
-export const location = { city: 'Salto de Itu', lat: -23.2, lon: -47.29 }
+export const location = { city: 'São Paulo', lat: -23.55, lon: -46.63 }
 
 // "Tempo de estrada": contador desde que você começou a programar/estudar.
 // Preencha com a data real no formato 'AAAA-MM-DD' (ex.: '2024-02-01'). Vazio = o card fica oculto.
