@@ -127,7 +127,7 @@ export default function Taskbar({ apps, open, minimized, onOpen, onTask }) {
         </button>
       </div>
 
-      <span className="font-mono text-xs">{now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
+      <span className="text-xs">{now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
     </div>
   )
 }

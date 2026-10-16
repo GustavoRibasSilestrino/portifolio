@@ -61,26 +61,26 @@ export default function App() {
 
   return (
     <div className="relative h-full w-full overflow-hidden">
-      <div className="scroll absolute left-3 top-3 z-10 flex max-h-[calc(100%-64px)] flex-col gap-2 overflow-y-auto pr-1">
+      <div className="absolute left-3 top-3 z-10 flex max-h-[calc(100%-64px)] flex-col gap-2 overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {apps.map((a) => (
           <button key={a.id} onClick={() => openApp(a.id)} className="group flex w-[72px] shrink-0 flex-col items-center gap-1">
             <span className="box grid h-11 w-11 place-items-center transition group-hover:bg-ink group-hover:text-paper">
               <Icon name={a.icon} size={22} />
             </span>
-            <span className="text-center font-mono text-[10px] leading-tight">{t(a.title)}</span>
+            <span className="text-center text-[10px] leading-tight">{t(a.title)}</span>
           </button>
         ))}
       </div>
 
       <div className="pointer-events-none absolute right-4 top-3 hidden flex-col items-end gap-2 sm:flex">
-        <h1 className="text-right text-4xl font-bold leading-[0.95] md:text-6xl">
+        <h1 className="text-right font-display text-[clamp(2.25rem,6vw,5.5rem)] font-bold leading-[0.92] tracking-[-0.025em] text-ink/85">
           Gustavo<br />Ribas
         </h1>
-        <p className="text-right font-mono text-xs opacity-70">{t(profile.role)}</p>
+        <p className="text-right text-xs opacity-70">{t(profile.role)}</p>
       </div>
 
       <Widgets />
-      <div className="absolute bottom-14 left-1/2 hidden -translate-x-1/2 md:block">
+      <div className="absolute bottom-11 right-[230px] hidden md:block">
         <Avatar />
       </div>
 

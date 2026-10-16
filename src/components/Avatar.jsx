@@ -86,7 +86,7 @@ export default function Avatar() {
             initial={{ opacity: 0, y: 8, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0 }}
-            className="box absolute -top-8 z-10 whitespace-nowrap px-3 py-1 font-mono text-xs"
+            className="box absolute -top-8 z-10 whitespace-nowrap px-3 py-1 text-xs"
           >
             {t(ui.wave)}
           </motion.div>
@@ -100,7 +100,7 @@ export default function Avatar() {
           </Suspense>
         </Boundary>
       </div>
-      <span className="font-mono text-[10px] opacity-60">{t(ui.clickMe)}</span>
+      <span className="text-[10px] opacity-60">{t(ui.clickMe)}</span>
     </div>
   )
 }

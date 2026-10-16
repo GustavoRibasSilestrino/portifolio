@@ -5,11 +5,11 @@ import Icon from './Icon'
 import Terminal from './Terminal'
 
 const Tag = ({ children }) => (
-  <span className="rounded border border-ink px-1.5 py-0.5 font-mono text-[10px]">{children}</span>
+  <span className="rounded border border-ink px-1.5 py-0.5 text-[10px]">{children}</span>
 )
 
 const Label = ({ children }) => (
-  <div className="mb-1.5 font-mono text-[10px] uppercase tracking-wider opacity-60">{children}</div>
+  <div className="mb-1.5 text-[10px] uppercase tracking-wider opacity-60">{children}</div>
 )
 
 export function AboutPanel() {
@@ -61,7 +61,7 @@ export function ExperiencePanel() {
     <div className="space-y-5 border-l-2 border-ink pl-4">
       {timeline.map((item, i) => (
         <div key={i}>
-          <div className="font-mono text-[10px] uppercase opacity-60">{t(item.when)}</div>
+          <div className="text-[10px] uppercase opacity-60">{t(item.when)}</div>
           <div className="font-bold">{t(item.title)}</div>
           <div className="text-xs opacity-70">{t(item.where)}</div>
           <p className="mt-1">{t(item.text)}</p>
@@ -121,10 +121,10 @@ export function NowPanel() {
   const { t } = useApp()
   return (
     <div className="space-y-4">
-      <div className="font-mono text-[10px] uppercase opacity-60">{t(now.updated)}</div>
+      <div className="text-[10px] uppercase opacity-60">{t(now.updated)}</div>
       {now.items.map((it, i) => (
         <div key={i} className="flex gap-3 border-b border-ink/15 pb-3 last:border-0">
-          <span className="w-24 shrink-0 font-mono text-xs font-semibold uppercase">{t(it.label)}</span>
+          <span className="w-24 shrink-0 text-xs font-semibold uppercase">{t(it.label)}</span>
           <span>{t(it.text)}</span>
         </div>
       ))}

@@ -189,20 +189,59 @@ export const contact = {
   linkedin: 'https://www.linkedin.com/in/gustavo-r-silestrino-b112ba38b/',
 }
 
-export const widgets = {
-  local: { pt: 'Local', en: 'Location' },
-  study: { pt: 'Estudando agora', en: 'Studying now' },
-  studyItems: [
-    ['Java', { pt: 'foco', en: 'focus' }],
-    ['SQL', { pt: 'em andamento', en: 'in progress' }],
-    ['React', { pt: 'praticando', en: 'practicing' }],
-  ],
-  note: { pt: 'Nota', en: 'Note' },
-  noteText: {
-    pt: 'Hoje estou aprendendo Java e construindo meu portfólio. Um commit por dia.',
-    en: "Today I'm learning Java and building my portfolio. One commit a day.",
-  },
+// ---- Cards da tela ----
+
+// Cidade usada no card de clima (dados reais do Open-Meteo, sem chave de API).
+export const location = { city: 'Salto de Itu', lat: -23.2, lon: -47.29 }
+
+// "Tempo de estrada": contador desde que você começou a programar/estudar.
+// Preencha com a data real no formato 'AAAA-MM-DD' (ex.: '2024-02-01'). Vazio = o card fica oculto.
+export const career = {
+  since: '',
+  sinceText: { pt: 'estudando e programando desde', en: 'studying and coding since' },
 }
+
+export const statusCard = {
+  text: {
+    pt: 'Agora estou estudando Java e tentando deixar o código mais claro a cada commit.',
+    en: "Right now I'm studying Java and trying to make my code a bit clearer with every commit.",
+  },
+  coffee: { pt: 'Nível de café', en: 'Coffee level' },
+}
+
+// Playlist do card "Tocando agora". Coloque os .mp3 em public/musicas e liste aqui.
+// Ex.: { title: 'Nome', artist: 'Artista', src: '/musicas/nome.mp3' }. Vazio = o card fica oculto.
+export const music = { playlist: [] }
+
+export const widgetText = {
+  career: { pt: 'Tempo de estrada', en: 'Time on the road' },
+  weather: { pt: `${location.city} agora`, en: `${location.city} now` },
+  status: { pt: 'Status', en: 'Status' },
+  github: { pt: 'Última atividade no GitHub', en: 'Latest GitHub activity' },
+  music: { pt: 'Tocando agora', en: 'Now playing' },
+  years: { pt: 'anos', en: 'years' },
+  months: { pt: 'meses', en: 'months' },
+  days: { pt: 'dias', en: 'days' },
+  feels: { pt: 'sensação de', en: 'feels like' },
+  hoodie: { pt: 'moletom', en: 'hoodie' },
+  melting: { pt: 'derretendo', en: 'melting' },
+  loading: { pt: 'Carregando...', en: 'Loading...' },
+  weatherError: { pt: 'Não consegui buscar o clima agora.', en: "Couldn't fetch the weather right now." },
+  githubError: { pt: 'Não consegui buscar a atividade agora.', en: "Couldn't fetch the activity right now." },
+  githubEmpty: { pt: 'Sem atividade pública recente.', en: 'No recent public activity.' },
+  pushed: { pt: 'Subiu {n} {commits} em', en: 'Pushed {n} {commits} to' },
+  commit: { pt: 'commit', en: 'commit' },
+  commits: { pt: 'commits', en: 'commits' },
+}
+
+// Frases do card de clima, por faixa de temperatura (°C): usa a primeira cujo limite é maior que a temperatura.
+export const weatherQuips = [
+  { max: 12, pt: 'Hora do moletom. O café agradece.', en: 'Hoodie weather. Your coffee approves.' },
+  { max: 20, pt: 'Clima perfeito. Temperatura ideal pra codar.', en: 'Perfect weather. Ideal temperature to code.' },
+  { max: 28, pt: 'Clima agradável. Dá pra focar no código.', en: 'Pleasant weather. Easy to focus on the code.' },
+  { max: 34, pt: 'Tá quente. Água por perto e ventilador ligado.', en: "It's hot. Keep water close and the fan on." },
+  { max: Infinity, pt: 'Calor demais. Até o processador pede arrego.', en: 'Way too hot. Even the CPU is begging for mercy.' },
+]
 
 // Textos da interface
 export const ui = {

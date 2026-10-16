@@ -73,6 +73,71 @@ const paths = {
     </>
   ),
   check: <polyline points="20 6 9 17 4 12" />,
+  cloud: <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />,
+  rain: (
+    <>
+      <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" />
+      <path d="M16 14v6" />
+      <path d="M8 14v6" />
+      <path d="M12 16v6" />
+    </>
+  ),
+  storm: (
+    <>
+      <path d="M6 16.326A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 .5 8.973" />
+      <path d="m13 12-3 5h4l-3 5" />
+    </>
+  ),
+  fog: (
+    <>
+      <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" />
+      <path d="M16 17H7" />
+      <path d="M17 21H9" />
+    </>
+  ),
+  snow: (
+    <>
+      <path d="M12 2v20" />
+      <path d="m4.93 4.93 14.14 14.14" />
+      <path d="M2 12h20" />
+      <path d="m19.07 4.93-14.14 14.14" />
+    </>
+  ),
+  play: <polygon points="6 3 20 12 6 21 6 3" />,
+  pause: (
+    <>
+      <rect x="14" y="4" width="4" height="16" rx="1" />
+      <rect x="6" y="4" width="4" height="16" rx="1" />
+    </>
+  ),
+  skipBack: (
+    <>
+      <polygon points="19 20 9 12 19 4 19 20" />
+      <line x1="5" x2="5" y1="19" y2="5" />
+    </>
+  ),
+  skipForward: (
+    <>
+      <polygon points="5 4 15 12 5 20 5 4" />
+      <line x1="19" x2="19" y1="5" y2="19" />
+    </>
+  ),
+  volume: (
+    <>
+      <path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z" />
+      <path d="M16 9a5 5 0 0 1 0 6" />
+    </>
+  ),
+  grip: (
+    <>
+      <circle cx="9" cy="5" r="1" fill="currentColor" />
+      <circle cx="15" cy="5" r="1" fill="currentColor" />
+      <circle cx="9" cy="12" r="1" fill="currentColor" />
+      <circle cx="15" cy="12" r="1" fill="currentColor" />
+      <circle cx="9" cy="19" r="1" fill="currentColor" />
+      <circle cx="15" cy="19" r="1" fill="currentColor" />
+    </>
+  ),
   minus: <path d="M5 12h14" />,
   maximize: (
     <>

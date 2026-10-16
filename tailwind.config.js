@@ -6,7 +6,11 @@ export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
-      fontFamily: { sans: ['"Space Grotesk"', 'system-ui', 'sans-serif'], mono: ['"JetBrains Mono"', 'monospace'] },
+      fontFamily: {
+        sans: ['Poppins', 'system-ui', 'sans-serif'],
+        display: ['"Bricolage Grotesque"', 'Poppins', 'sans-serif'],
+        term: ['"JetBrains Mono"', 'monospace'],
+      },
       colors: {
         paper: c('bg'),
         card: c('card'),
