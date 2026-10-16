@@ -5,6 +5,7 @@ import Taskbar from './components/Taskbar'
 import Avatar from './components/Avatar'
 import Widgets from './components/Widgets'
 import Icon from './components/Icon'
+import CursorTrail from './components/CursorTrail'
 import {
   AboutPanel,
   ExperiencePanel,
@@ -61,6 +62,7 @@ export default function App() {
 
   return (
     <div className="relative h-full w-full overflow-hidden">
+      <CursorTrail />
       <div className="absolute left-3 top-3 z-10 flex max-h-[calc(100%-64px)] flex-col gap-2 overflow-y-auto pr-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {apps.map((a) => (
           <button key={a.id} onClick={() => openApp(a.id)} className="group flex w-[72px] shrink-0 flex-col items-center gap-1">
