@@ -7,7 +7,6 @@ import Widgets from './components/Widgets'
 import Icon from './components/Icon'
 import {
   AboutPanel,
-  PhotoPanel,
   ExperiencePanel,
   ProjectsPanel,
   WorkPanel,
@@ -19,10 +18,9 @@ import {
 import { profile } from './data'
 import { useApp } from './context'
 
-// Mesmas categorias do portfólio de referência, na mesma ordem.
+// Categorias da lateral, na ordem em que aparecem.
 const apps = [
   { id: 'sobre', icon: 'user', title: { pt: 'Sobre mim', en: 'About me' }, Body: AboutPanel, width: 560 },
-  { id: 'foto', icon: 'camera', title: { pt: 'Fotografia', en: 'Photography' }, Body: PhotoPanel },
   { id: 'exp', icon: 'briefcase', title: { pt: 'Experiência', en: 'Experience' }, Body: ExperiencePanel },
   { id: 'projetos', icon: 'folder', title: { pt: 'Projetos', en: 'Projects' }, Body: ProjectsPanel },
   { id: 'como', icon: 'compass', title: { pt: 'Como eu trabalho', en: 'How I work' }, Body: WorkPanel },

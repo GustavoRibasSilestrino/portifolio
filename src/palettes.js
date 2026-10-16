@@ -1,4 +1,5 @@
 // ink = texto/bordas/barras · mid = tom intermediário · bg = fundo da página · card = janelas e cards · accent = destaque
+// Cada paleta é definida no modo claro; o modo escuro é derivado dela automaticamente.
 export const palettes = [
   { id: 'slate', name: { pt: 'Ardósia e turquesa', en: 'Slate & teal' }, ink: '#1b2430', mid: '#7c9bb5', bg: '#f1f4f7', card: '#fafbfc', accent: '#0e7c86' },
   { id: 'navy', name: { pt: 'Creme e marinho', en: 'Cream & navy' }, ink: '#0b2a4a', mid: '#5f9bbd', bg: '#f6ecd9', card: '#fdf8ee', accent: '#c1121f' },
@@ -12,14 +13,43 @@ export const palettes = [
 ]
 
 export const defaultPalette = 'slate'
+export const defaultMode = 'dark'
 
-const triplet = (hex) => {
+const toRgb = (hex) => {
   const n = parseInt(hex.slice(1), 16)
-  return `${(n >> 16) & 255} ${(n >> 8) & 255} ${n & 255}`
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255]
+}
+const triplet = (hex) => toRgb(hex).join(' ')
+
+// mistura a com b (t = 0 → a, t = 1 → b)
+const mix = (a, b, t) => {
+  const A = toRgb(a)
+  const B = toRgb(b)
+  const h = A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0'))
+  return `#${h.join('')}`
 }
 
-export function applyPalette(id) {
+function colorsFor(p, mode) {
+  if (mode === 'light') {
+    return { ink: p.ink, mid: p.mid, bg: p.bg, card: p.card, accent: p.accent, bar: p.ink, onbar: p.bg, shadow: p.ink }
+  }
+  // escuro: fundo e cards saem do tom escuro da paleta; o texto usa o fundo claro dela
+  return {
+    ink: p.bg,
+    mid: p.mid,
+    bg: mix(p.ink, '#000000', 0.45),
+    card: mix(p.ink, '#000000', 0.15),
+    accent: mix(p.accent, '#ffffff', 0.25),
+    bar: mix(p.ink, '#ffffff', 0.12),
+    onbar: p.bg,
+    shadow: '#000000',
+  }
+}
+
+export function applyPalette(id, mode) {
   const p = palettes.find((x) => x.id === id) ?? palettes[0]
+  const colors = colorsFor(p, mode)
   const root = document.documentElement.style
-  for (const k of ['ink', 'mid', 'bg', 'card', 'accent']) root.setProperty(`--c-${k}`, triplet(p[k]))
+  for (const [k, v] of Object.entries(colors)) root.setProperty(`--c-${k}`, triplet(v))
+  root.colorScheme = mode
 }

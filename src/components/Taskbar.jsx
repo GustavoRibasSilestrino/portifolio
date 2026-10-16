@@ -5,7 +5,7 @@ import { palettes } from '../palettes'
 import { ui } from '../data'
 
 export default function Taskbar({ apps, open, minimized, onOpen, onTask }) {
-  const { lang, setLang, palette, setPalette, t } = useApp()
+  const { lang, setLang, mode, setMode, palette, setPalette, t } = useApp()
   const [menu, setMenu] = useState(false)
   const [pal, setPal] = useState(false)
   const [now, setNow] = useState(new Date())
@@ -28,7 +28,7 @@ export default function Taskbar({ apps, open, minimized, onOpen, onTask }) {
   }, [])
 
   return (
-    <div className="absolute inset-x-0 bottom-0 z-[9999] flex h-11 items-center gap-2 border-t-2 border-ink bg-ink px-2 text-paper">
+    <div className="absolute inset-x-0 bottom-0 z-[9999] flex h-11 items-center gap-2 border-t-2 border-ink bg-bar px-2 text-onbar">
       <div ref={startRef} className="relative">
         {menu && (
           <div className="box absolute bottom-10 left-0 w-52 p-1 text-ink">
@@ -47,7 +47,7 @@ export default function Taskbar({ apps, open, minimized, onOpen, onTask }) {
             ))}
           </div>
         )}
-        <button onClick={() => setMenu((m) => !m)} className="rounded bg-accent px-3 py-1 text-sm font-bold text-white">
+        <button onClick={() => setMenu((m) => !m)} className="rounded bg-accent px-3 py-1 text-sm font-bold text-card">
           {t(ui.start)}
         </button>
       </div>
@@ -59,7 +59,7 @@ export default function Taskbar({ apps, open, minimized, onOpen, onTask }) {
             <button
               key={id}
               onClick={() => onTask(id)}
-              className={`flex shrink-0 items-center gap-1 rounded border border-paper/40 px-2 py-0.5 text-xs ${
+              className={`flex shrink-0 items-center gap-1 rounded border border-onbar/40 px-2 py-0.5 text-xs ${
                 minimized.includes(id) ? 'opacity-50' : ''
               }`}
             >
@@ -70,18 +70,28 @@ export default function Taskbar({ apps, open, minimized, onOpen, onTask }) {
       </div>
 
       {/* idioma */}
-      <div role="group" aria-label={t(ui.language)} className="flex overflow-hidden rounded border border-paper/40 text-xs font-bold">
+      <div role="group" aria-label={t(ui.language)} className="flex overflow-hidden rounded border border-onbar/40 text-xs font-bold">
         {['en', 'pt'].map((l) => (
           <button
             key={l}
             onClick={() => setLang(l)}
             aria-pressed={lang === l}
-            className={`px-2 py-1 uppercase ${lang === l ? 'bg-paper text-ink' : 'hover:bg-paper/10'}`}
+            className={`px-2 py-1 uppercase ${lang === l ? 'bg-onbar text-bar' : 'hover:bg-onbar/10'}`}
           >
             {l}
           </button>
         ))}
       </div>
+
+      {/* tema claro / escuro */}
+      <button
+        onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')}
+        aria-label={t(mode === 'dark' ? ui.lightMode : ui.darkMode)}
+        title={t(mode === 'dark' ? ui.lightMode : ui.darkMode)}
+        className="grid h-7 w-7 place-items-center rounded border border-onbar/40 hover:bg-onbar/10"
+      >
+        <Icon name={mode === 'dark' ? 'sun' : 'moon'} size={16} />
+      </button>
 
       {/* paletas */}
       <div ref={palRef} className="relative">
@@ -111,7 +121,7 @@ export default function Taskbar({ apps, open, minimized, onOpen, onTask }) {
           onClick={() => setPal((v) => !v)}
           aria-label={t(ui.palette)}
           title={t(ui.palette)}
-          className="grid h-7 w-7 place-items-center rounded border border-paper/40 hover:bg-paper/10"
+          className="grid h-7 w-7 place-items-center rounded border border-onbar/40 hover:bg-onbar/10"
         >
           <Icon name="palette" size={16} />
         </button>

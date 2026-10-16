@@ -49,20 +49,20 @@ export default function Terminal() {
   }
 
   return (
-    <div className="-m-5 min-h-[240px] bg-ink p-4 font-mono text-xs text-green-300">
+    <div className="-m-5 min-h-[240px] bg-bar p-4 font-mono text-xs text-green-300">
       {lines.map((l, i) => (
-        <pre key={i} className={`whitespace-pre-wrap ${l.k === 'in' ? 'text-paper' : ''}`}>
+        <pre key={i} className={`whitespace-pre-wrap ${l.k === 'in' ? 'text-onbar' : ''}`}>
           {l.k === 'in' ? '$ ' : ''}
           {l.k === 'in' ? l.v : render(l.v)}
         </pre>
       ))}
       <form onSubmit={submit} className="flex gap-2">
-        <span className="text-paper">$</span>
+        <span className="text-onbar">$</span>
         <input
           autoFocus
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          className="flex-1 bg-transparent text-paper outline-none"
+          className="flex-1 bg-transparent text-onbar outline-none"
           spellCheck="false"
           aria-label="terminal"
         />

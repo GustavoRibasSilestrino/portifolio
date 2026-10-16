@@ -4,7 +4,7 @@ import Icon from './Icon'
 import { useApp } from '../context'
 import { ui } from '../data'
 
-function Ctrl({ icon, label, onClick, hover = 'hover:bg-paper/20' }) {
+function Ctrl({ icon, label, onClick, hover = 'hover:bg-onbar/20' }) {
   return (
     <button
       onPointerDown={(e) => e.stopPropagation()}
@@ -59,7 +59,7 @@ export default function Window({ title, icon, index, zIndex, minimized, onFocus,
       <div
         onPointerDown={(e) => !max && controls.start(e)}
         onDoubleClick={toggleMax}
-        className={`flex touch-none select-none items-center gap-2 bg-ink px-3 py-2 text-paper ${
+        className={`flex touch-none select-none items-center gap-2 bg-bar px-3 py-2 text-onbar ${
           max ? '' : 'cursor-grab active:cursor-grabbing'
         }`}
       >

@@ -1,5 +1,5 @@
 import { useApp } from '../context'
-import { profile, skills, projects, timeline, habits, photography, volunteering, now, contact, ui } from '../data'
+import { profile, skills, projects, timeline, habits, volunteering, now, contact, ui } from '../data'
 import { Face } from './Avatar'
 import Icon from './Icon'
 import Terminal from './Terminal'
@@ -50,27 +50,6 @@ export function AboutPanel() {
             </div>
           </div>
         ))}
-      </div>
-    </div>
-  )
-}
-
-export function PhotoPanel() {
-  const { t } = useApp()
-  const slots = photography.gallery.length ? photography.gallery : Array.from({ length: 6 })
-  return (
-    <div className="space-y-4">
-      <p>{t(photography.text)}</p>
-      <div className="grid grid-cols-3 gap-2">
-        {slots.map((src, i) =>
-          src ? (
-            <img key={i} src={src} alt="" className="aspect-square w-full rounded border-2 border-ink object-cover" />
-          ) : (
-            <div key={i} className="grid aspect-square place-items-center rounded border-2 border-dashed border-ink/40 opacity-60">
-              <Icon name="camera" size={22} />
-            </div>
-          ),
-        )}
       </div>
     </div>
   )

@@ -7,7 +7,15 @@ export default {
   theme: {
     extend: {
       fontFamily: { sans: ['"Space Grotesk"', 'system-ui', 'sans-serif'], mono: ['"JetBrains Mono"', 'monospace'] },
-      colors: { paper: c('bg'), card: c('card'), ink: c('ink'), mid: c('mid'), accent: c('accent') },
+      colors: {
+        paper: c('bg'),
+        card: c('card'),
+        ink: c('ink'),
+        mid: c('mid'),
+        accent: c('accent'),
+        bar: c('bar'),
+        onbar: c('onbar'),
+      },
     },
   },
   plugins: [],

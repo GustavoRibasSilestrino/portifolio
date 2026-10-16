@@ -150,15 +150,6 @@ export const habits = {
   ],
 }
 
-export const photography = {
-  text: {
-    pt: 'Ainda estou montando minha galeria. Em breve, fotos dos lugares e momentos que eu gosto de registrar.',
-    en: "I'm still putting my gallery together. Soon: photos of places and moments I like to capture.",
-  },
-  // Coloque as imagens em /public/fotos e liste aqui, ex.: '/fotos/01.jpg'
-  gallery: [],
-}
-
 export const volunteering = {
   text: {
     pt: 'Esta seção está sendo preparada. Aqui vão entrar as ações e projetos voluntários em que eu participar.',
@@ -219,6 +210,8 @@ export const ui = {
   trash: { pt: 'Lixeira', en: 'Trash' },
   trashRestore: { pt: 'Clique para restaurar os cards', en: 'Click to restore the cards' },
   palette: { pt: 'Paleta de cores', en: 'Color palette' },
+  darkMode: { pt: 'Mudar para o tema escuro', en: 'Switch to dark theme' },
+  lightMode: { pt: 'Mudar para o tema claro', en: 'Switch to light theme' },
   language: { pt: 'Idioma', en: 'Language' },
   minimize: { pt: 'Minimizar', en: 'Minimize' },
   maximize: { pt: 'Ampliar', en: 'Maximize' },
