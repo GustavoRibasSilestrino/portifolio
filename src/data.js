@@ -262,6 +262,8 @@ export const ui = {
   trash: { pt: 'Lixeira', en: 'Trash' },
   trashRestore: { pt: 'Clique para restaurar os cards', en: 'Click to restore the cards' },
   play: { pt: 'Tocar', en: 'Play' },
+  pause: { pt: 'Pausar', en: 'Pause' },
+  openYoutube: { pt: 'Abrir no YouTube', en: 'Open on YouTube' },
   palette: { pt: 'Paleta de cores', en: 'Color palette' },
   darkMode: { pt: 'Mudar para o tema escuro', en: 'Switch to dark theme' },
   lightMode: { pt: 'Mudar para o tema claro', en: 'Switch to light theme' },

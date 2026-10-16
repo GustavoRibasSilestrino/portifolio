@@ -64,29 +64,37 @@ function useWeather() {
   return state
 }
 
-// Último push público do GitHub (API pública, até 60 consultas/h por IP; guardamos 5 min em cache).
+// Dia no fuso de São Paulo (AAAA-MM-DD), para comparar "hoje / ontem" pelo calendário e não por janelas de 24h.
+const dayKey = (iso) => new Date(iso).toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' })
+const daysBetween = (isoA, isoB) => Math.round((Date.parse(dayKey(isoA)) - Date.parse(dayKey(isoB))) / 864e5)
+
+// Atividade real do GitHub: pega o repositório público com push mais recente e conta os commits do último dia.
+// (A API de "eventos" ficava dias atrasada e não informa mais a quantidade de commits.)
+// API pública sem chave: até 60 consultas/h por IP, por isso guardamos 5 min em cache.
 function useGithub() {
   const user = contact.github.replace(/\/+$/, '').split('/').pop()
-  const [state, setState] = useState(() => cached('github', 5 * 60e3) ?? { status: 'loading' })
+  const [state, setState] = useState(() => cached('github2', 5 * 60e3) ?? { status: 'loading' })
   useEffect(() => {
     if (state.status === 'ok' || state.status === 'empty') return
     let alive = true
-    fetch(`https://api.github.com/users/${user}/events/public?per_page=30`)
-      .then((r) => {
+    const api = (path) =>
+      fetch(`https://api.github.com${path}`).then((r) => {
         if (!r.ok) throw new Error(r.status)
         return r.json()
       })
-      .then((events) => {
-        const push = events.find((e) => e.type === 'PushEvent')
-        const data = push
-          ? {
-              status: 'ok',
-              repo: push.repo.name,
-              commits: push.payload.size ?? push.payload.commits?.length ?? 1,
-              at: push.created_at,
-            }
-          : { status: 'empty' }
-        store('github', data)
+    api(`/users/${user}/repos?sort=pushed&direction=desc&per_page=5&type=owner`)
+      .then(async (repos) => {
+        const repo = repos.find((r) => !r.fork) ?? repos[0]
+        if (!repo) return { status: 'empty' }
+        const commits = await api(`/repos/${repo.full_name}/commits?per_page=30`)
+        if (!commits.length) return { status: 'empty' }
+        const at = commits[0].commit.committer.date
+        // quantos commits foram feitos no mesmo dia do mais recente
+        const sameDay = commits.filter((c) => dayKey(c.commit.committer.date) === dayKey(at)).length
+        return { status: 'ok', repo: repo.full_name, commits: sameDay, more: sameDay === commits.length, at }
+      })
+      .then((data) => {
+        store('github2', data)
         if (alive) setState(data)
       })
       .catch(() => alive && setState({ status: 'error' }))
@@ -219,7 +227,7 @@ function GithubBody() {
   if (g.status === 'error') return <p className="text-xs opacity-70">{t(widgetText.githubError)}</p>
   if (g.status === 'empty') return <p className="text-xs opacity-70">{t(widgetText.githubEmpty)}</p>
 
-  const days = Math.floor((Date.now() - new Date(g.at).getTime()) / 864e5)
+  const days = daysBetween(new Date().toISOString(), g.at)
   const when =
     days <= 0
       ? lang === 'en' ? 'today' : 'hoje'
@@ -227,7 +235,7 @@ function GithubBody() {
         ? lang === 'en' ? 'yesterday' : 'ontem'
         : lang === 'en' ? `${days} days ago` : `há ${days} dias`
   const line = t(widgetText.pushed)
-    .replace('{n}', g.commits)
+    .replace('{n}', g.more ? `${g.commits}+` : g.commits)
     .replace('{commits}', t(g.commits === 1 ? widgetText.commit : widgetText.commits))
   return (
     <>
@@ -250,14 +258,108 @@ const fmt = (s) => {
   return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`
 }
 
-// Player oficial do YouTube (sem baixar nada: o vídeo continua no YouTube e conta como visualização).
-// Começa compacto (capa + título + botão). Ao clicar em tocar, o vídeo abre e começa a tocar.
+// Carrega a API do YouTube uma única vez.
+let ytApi
+const loadYouTubeApi = () => {
+  if (window.YT?.Player) return Promise.resolve(window.YT)
+  if (!ytApi) {
+    ytApi = new Promise((resolve, reject) => {
+      const previous = window.onYouTubeIframeAPIReady
+      window.onYouTubeIframeAPIReady = () => {
+        previous?.()
+        resolve(window.YT)
+      }
+      const s = document.createElement('script')
+      s.src = 'https://www.youtube.com/iframe_api'
+      s.async = true
+      s.onerror = () => {
+        ytApi = undefined
+        reject(new Error('YouTube API indisponível'))
+      }
+      document.head.appendChild(s)
+    })
+  }
+  return ytApi
+}
+
+// Player de música com interface própria. O áudio vem do YouTube: o vídeo fica num iframe de 1×1 pixel,
+// invisível, controlado pela API oficial (play/pause, tempo, volume). Nada é baixado.
 function YouTubeBody() {
   const { t } = useApp()
   const { id, title, artist } = music.youtube
-  const [open, setOpen] = useState(false)
+  const host = useRef(null)
+  const player = useRef(null)
+  const [s, setS] = useState({ ready: false, playing: false, cur: 0, dur: 0, error: false })
+  const [vol, setVol] = useState(70)
+
+  useEffect(() => {
+    let alive = true
+    loadYouTubeApi()
+      .then((YT) => {
+        if (!alive || !host.current) return
+        const mount = document.createElement('div')
+        host.current.appendChild(mount) // a API troca este elemento pelo iframe
+        player.current = new YT.Player(mount, {
+          width: 1,
+          height: 1,
+          videoId: id,
+          playerVars: { controls: 0, disablekb: 1, fs: 0, rel: 0, playsinline: 1, modestbranding: 1, iv_load_policy: 3 },
+          events: {
+            onReady: (e) => {
+              e.target.setVolume(70)
+              setS((p) => ({ ...p, ready: true, dur: e.target.getDuration() || 0 }))
+            },
+            onStateChange: (e) => {
+              if (e.data === YT.PlayerState.ENDED) {
+                e.target.seekTo(0, true)
+                e.target.pauseVideo()
+                setS((p) => ({ ...p, playing: false, cur: 0 }))
+                return
+              }
+              setS((p) => ({ ...p, playing: e.data === YT.PlayerState.PLAYING, dur: e.target.getDuration() || p.dur }))
+            },
+            onError: () => setS((p) => ({ ...p, error: true })),
+          },
+        })
+      })
+      .catch(() => alive && setS((p) => ({ ...p, error: true })))
+
+    // atualiza a barra enquanto toca
+    const timer = setInterval(() => {
+      const p = player.current
+      if (p?.getCurrentTime) setS((x) => (x.playing ? { ...x, cur: p.getCurrentTime(), dur: p.getDuration() || x.dur } : x))
+    }, 400)
+
+    return () => {
+      alive = false
+      clearInterval(timer)
+      try {
+        player.current?.destroy()
+      } catch {
+        /* player já removido */
+      }
+      player.current = null
+    }
+  }, [id])
+
+  const toggle = () => {
+    const p = player.current
+    if (!p || !s.ready) return
+    if (s.playing) p.pauseVideo()
+    else p.playVideo()
+  }
+  const seek = (v) => {
+    player.current?.seekTo(v, true)
+    setS((p) => ({ ...p, cur: v }))
+  }
+  const changeVolume = (v) => {
+    setVol(v)
+    player.current?.setVolume(v)
+  }
+  const stop = (e) => e.stopPropagation()
+
   return (
-    <div>
+    <div className="relative space-y-2.5">
       <div className="flex items-center gap-3">
         <img
           src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`}
@@ -270,27 +372,65 @@ function YouTubeBody() {
           <div className="truncate text-xs opacity-60">{artist}</div>
         </div>
         <button
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={() => setOpen((o) => !o)}
-          aria-label={t(open ? ui.close : ui.play)}
-          title={t(open ? ui.close : ui.play)}
-          className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent text-card"
+          onPointerDown={stop}
+          onClick={toggle}
+          disabled={!s.ready}
+          aria-label={s.playing ? t(ui.pause) : t(ui.play)}
+          title={s.playing ? t(ui.pause) : t(ui.play)}
+          className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-accent text-card transition disabled:opacity-50"
         >
-          <Icon name={open ? 'x' : 'play'} size={18} />
+          <Icon name={s.playing ? 'pause' : 'play'} size={18} />
         </button>
       </div>
-      {open && (
-        <div className="mt-3 aspect-video w-full overflow-hidden rounded-md border border-ink/20 bg-black">
-          <iframe
-            src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&playsinline=1`}
-            title={`${title} · ${artist}`}
-            className="h-full w-full"
-            allow="autoplay; encrypted-media; picture-in-picture"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-          />
-        </div>
+
+      {s.error ? (
+        <a
+          href={`https://www.youtube.com/watch?v=${id}`}
+          target="_blank"
+          rel="noreferrer"
+          onPointerDown={stop}
+          className="block text-xs text-accent underline-offset-2 hover:underline"
+        >
+          {t(ui.openYoutube)}
+        </a>
+      ) : (
+        <>
+          <div className="flex items-center gap-2 text-[10px] opacity-80">
+            <span className="w-8 tabular-nums">{fmt(s.cur)}</span>
+            <input
+              type="range"
+              min="0"
+              max={s.dur || 1}
+              step="0.5"
+              value={Math.min(s.cur, s.dur || 1)}
+              disabled={!s.ready}
+              onPointerDown={stop}
+              onChange={(e) => seek(Number(e.target.value))}
+              className="h-1 min-w-0 flex-1 accent-[rgb(var(--c-accent))]"
+              aria-label="progress"
+            />
+            <span className="w-8 text-right tabular-nums">{fmt(s.dur)}</span>
+            {/* volume na mesma linha (no celular o volume é o do aparelho) */}
+            <span className="flex items-center gap-1 pl-1 max-md:hidden">
+              <Icon name="volume" size={13} />
+              <input
+                type="range"
+                min="0"
+                max="100"
+                step="1"
+                value={vol}
+                onPointerDown={stop}
+                onChange={(e) => changeVolume(Number(e.target.value))}
+                className="h-1 w-12 accent-[rgb(var(--c-accent))]"
+                aria-label="volume"
+              />
+            </span>
+          </div>
+        </>
       )}
+
+      {/* iframe do YouTube: 1×1 pixel, invisível e sem receber cliques */}
+      <div ref={host} aria-hidden="true" className="pointer-events-none absolute -left-px -top-px size-px overflow-hidden opacity-0" />
     </div>
   )
 }
