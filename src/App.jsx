@@ -60,10 +60,10 @@ function useViewport() {
 // "Sobre mim" (termina perto de x = 940) e o canto direito, sem passar da lixeira.
 function avatarLayout({ w, h }) {
   const size = Math.round(Math.min(Math.max(340, w * 0.28), 560, (h - 140) * 0.9))
-  const freeStart = 940
-  const freeEnd = w * 0.78
+  const freeStart = 990 // um pouco afastado da janela "Sobre mim"
+  const freeEnd = w * 0.85
   const centered = (freeStart + freeEnd) / 2 - size / 2
-  const left = Math.min(Math.max(centered, 880), w - size - 100)
+  const left = Math.min(Math.max(centered, 900), w - size - 100)
   return { size, left: Math.round(left) }
 }
 
@@ -124,7 +124,7 @@ export default function App() {
       </div>
 
       <div className="pointer-events-none absolute right-4 top-3 hidden flex-col items-end gap-2 sm:flex">
-        <h1 className="text-right font-display text-[clamp(2.25rem,6vw,5.5rem)] font-bold leading-[0.92] tracking-[-0.025em] text-ink/85">
+        <h1 className="text-right font-display text-[clamp(2.5rem,6.8vw,6.75rem)] font-bold leading-[0.92] tracking-[-0.025em] text-ink/85">
           Gustavo<br />Ribas
         </h1>
         <p className="text-right text-xs opacity-70">{t(profile.role)}</p>

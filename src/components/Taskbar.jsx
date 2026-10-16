@@ -86,9 +86,8 @@ export default function Taskbar({ apps, open, minimized, onOpen, onTask, onReset
         <button
           onClick={() => setMenu((m) => !m)}
           aria-expanded={menu}
-          className="flex items-center gap-2 rounded bg-accent px-2.5 py-1 text-sm font-bold text-card"
+          className="rounded bg-accent px-3 py-1 text-sm font-bold text-card"
         >
-          <span className="grid h-5 w-5 place-items-center rounded bg-card text-[9px] font-bold text-accent">GR</span>
           {t(ui.start)}
         </button>
       </div>
@@ -173,6 +172,16 @@ export default function Taskbar({ apps, open, minimized, onOpen, onTask, onReset
           <Icon name="palette" size={16} />
         </button>
       </div>
+
+      {/* redefinir layout (seta de recarregar) */}
+      <button
+        onClick={onReset}
+        aria-label={t(ui.resetLayout)}
+        title={t(ui.resetLayout)}
+        className="grid h-7 w-7 place-items-center rounded border border-onbar/40 hover:bg-onbar/10"
+      >
+        <Icon name="reset" size={16} />
+      </button>
 
       <span className="text-xs">{now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
     </div>
