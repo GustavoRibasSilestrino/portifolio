@@ -3,6 +3,14 @@
 @tailwind utilities;
 
 /* Valores iniciais (paleta Ardósia, modo escuro); o JS troca conforme a escolha da pessoa. */
+/* Botões usam a seta normal (o Tailwind coloca "mãozinha" por padrão). Links de texto mantêm a mão. */
+@layer base {
+  button,
+  [role='button'] {
+    cursor: default;
+  }
+}
+
 :root {
   --c-ink: 241 244 247;
   --c-mid: 124 155 181;
