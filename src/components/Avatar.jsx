@@ -3,13 +3,15 @@ import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { useApp } from '../context'
 import { moodFor, PLUMBOB, useHour } from '../mood'
 
-// Camadas do avatar 3D, da cintura para cima (as duas com 370×470 px e o mesmo enquadramento):
-//  head.webp       cabeça + pescoço (acompanha o mouse)
-//  body-rest.webp  corpo com os braços para baixo
-const SRC = { w: 370, h: 470 }
+// Avatar 3D (animado por IA), da cintura para cima, recortado quadro a quadro com fundo transparente:
+//  idle.webp  imagem parada (sempre visível, leve)
+//  wave.webp  animação do tchau (WebP animado, ~2 MB): carregada com a página já assentada e tocada ao clicar
+const SRC = { w: 1110, h: 1410 } // px do recorte (os dois arquivos têm essa proporção)
 export const AVATAR_ASPECT = SRC.w / SRC.h // largura / altura
-const HEAD = { cx: 185, top: 10, neckY: 193 } // centro, topo da cabeça e pescoço (px das camadas)
-const LAYER = (name) => `/avatar/${name}.webp`
+const HEAD = { cx: 617, top: 77, right: 806 } // centro, topo e lado direito da cabeça (px do recorte)
+const IDLE = '/avatar/idle.webp'
+const WAVE = '/avatar/wave.webp'
+const WAVE_MS = 4480 // duração da animação do tchau
 
 // Foto de perfil da janela "Sobre mim": rosto recortado da foto real.
 export function Face({ className = '' }) {
@@ -28,7 +30,7 @@ export function Face({ className = '' }) {
 }
 
 // Plumbob: o diamante do Sims. Gira em 3D (dois planos cruzados), flutua e brilha; a cor muda com o humor.
-function Plumbob({ palette, scale, cx, bottom, x, y }) {
+function Plumbob({ palette, scale, cx, bottom }) {
   const c = PLUMBOB[palette]
   const h = 78 * scale
   const w = 42 * scale
@@ -44,7 +46,7 @@ function Plumbob({ palette, scale, cx, bottom, x, y }) {
     <motion.div
       aria-hidden="true"
       className="pointer-events-none absolute"
-      style={{ x, y, width: w, height: h, left: cx - w / 2, top: bottom - h }}
+      style={{ width: w, height: h, left: cx - w / 2, top: bottom - h }}
     >
       <motion.div
         className="h-full w-full"
@@ -94,27 +96,42 @@ function Zzz({ left, top, scale }) {
   )
 }
 
-// Avatar 3D em camadas (da cintura para cima): a cabeça acompanha o mouse e o corpo respira.
+// Baixa a animação do tchau uma vez (quando a página já assentou) e guarda o arquivo na memória:
+// a cada clique criamos uma URL nova a partir dele, o que reinicia o WebP sem baixar de novo.
+let waveBlob = null
+let wavePending = null
+function loadWave() {
+  if (waveBlob) return Promise.resolve(waveBlob)
+  wavePending ??= fetch(WAVE)
+    .then((r) => (r.ok ? r.blob() : Promise.reject(new Error(String(r.status)))))
+    .then((b) => (waveBlob = b))
+    .catch(() => {
+      wavePending = null
+      return null
+    })
+  return wavePending
+}
+
+// Avatar 3D (da cintura para cima): respira, acompanha o mouse e acena quando clicado.
 // No estilo Sims: plumbob e humor que muda com a hora do dia.
-// `size` é a ALTURA do avatar na tela (px); a largura segue a proporção das camadas.
+// `size` é a ALTURA do avatar na tela (px); a largura segue a proporção da imagem.
 export default function Avatar({ size = 440 }) {
   const S = size
   const Wd = S * AVATAR_ASPECT
-  const k = S / SRC.h // escala das camadas para a tela
+  const k = S / SRC.h // escala da imagem para a tela
   const fx = S / 600 // escala dos enfeites (plumbob e "zzz")
   const { t } = useApp()
   const mood = moodFor(useHour())
   const [hop, setHop] = useState(false)
+  const [wave, setWave] = useState({ url: null, playing: false }) // animação em andamento
   const box = useRef(null)
+  const endTimer = useRef(null)
 
-  // mouse normalizado (-1..1) em relação ao avatar
+  // mouse normalizado (-1..1) em relação ao avatar: o corpo se inclina de leve para o lado do cursor
   const mx = useMotionValue(0)
-  const my = useMotionValue(0)
-  const sx = useSpring(mx, { stiffness: 110, damping: 16 })
-  const sy = useSpring(my, { stiffness: 110, damping: 16 })
-  const headX = useTransform(sx, (v) => v * 6 * k)
-  const headY = useTransform(sy, (v) => v * 4 * k)
-  const headRot = useTransform(sx, (v) => v * 3)
+  const sx = useSpring(mx, { stiffness: 90, damping: 18 })
+  const lean = useTransform(sx, (v) => v * 1.6)
+  const shift = useTransform(sx, (v) => v * 7 * fx)
 
   useEffect(() => {
     const clamp = (v) => Math.min(Math.max(v, -1), 1)
@@ -122,11 +139,28 @@ export default function Avatar({ size = 440 }) {
       const r = box.current?.getBoundingClientRect()
       if (!r) return
       mx.set(clamp((e.clientX - (r.left + r.width / 2)) / (window.innerWidth * 0.5)))
-      my.set(clamp((e.clientY - (r.top + r.height * 0.2)) / (window.innerHeight * 0.5)))
     }
     window.addEventListener('pointermove', move)
     return () => window.removeEventListener('pointermove', move)
-  }, [mx, my])
+  }, [mx])
+
+  // pré-carrega o tchau em segundo plano, sem competir com a abertura da página
+  useEffect(() => {
+    const go = () => loadWave()
+    if ('requestIdleCallback' in window) {
+      const id = window.requestIdleCallback(go, { timeout: 5000 })
+      return () => window.cancelIdleCallback(id)
+    }
+    const id = setTimeout(go, 3000)
+    return () => clearTimeout(id)
+  }, [])
+
+  useEffect(
+    () => () => {
+      clearTimeout(endTimer.current)
+    },
+    [],
+  )
 
   // animado (manhã): um pulinho de vez em quando
   useEffect(() => {
@@ -142,35 +176,66 @@ export default function Avatar({ size = 440 }) {
     }
   }, [mood.bounce])
 
-  const headOrigin = `${(HEAD.cx / SRC.w) * 100}% ${(HEAD.neckY / SRC.h) * 100}%`
-  const plumbobBottom = (HEAD.top - 4) * k
+  const endWave = (url) => {
+    clearTimeout(endTimer.current)
+    setWave({ url: null, playing: false })
+    URL.revokeObjectURL(url)
+  }
+  const doWave = async () => {
+    if (wave.url) return // já está acenando
+    const blob = await loadWave()
+    if (!blob) return
+    setWave({ url: URL.createObjectURL(blob), playing: false })
+  }
+  // o WebP animado começa a correr quando termina de carregar: aí escondemos a imagem parada e marcamos o fim
+  const onWaveLoad = () => {
+    setWave((w) => ({ ...w, playing: true }))
+    const url = wave.url
+    clearTimeout(endTimer.current)
+    endTimer.current = setTimeout(() => endWave(url), WAVE_MS + 120)
+  }
+
+  const plumbobBottom = (HEAD.top - 8) * k
   const layer = 'pointer-events-none absolute inset-0 h-full w-full select-none'
 
   return (
     <div className="relative" style={{ width: Wd, height: S }}>
-      <Plumbob palette={mood.plumbob} scale={fx} cx={HEAD.cx * k} bottom={plumbobBottom} x={headX} y={headY} />
-      {mood.zzz && <Zzz left={(HEAD.cx + 78) * k} top={(HEAD.top + 22) * k} scale={fx} />}
-
       <motion.div
         ref={box}
-        role="img"
-        aria-label={t({ pt: 'Avatar do Gustavo', en: "Gustavo's avatar" })}
-        className="absolute inset-0 select-none"
+        role="button"
+        tabIndex={0}
+        aria-label={t({ pt: 'Avatar do Gustavo: clique para acenar', en: "Gustavo's avatar: click to wave" })}
+        title={t({ pt: 'Clique para acenar', en: 'Click to wave' })}
+        className="absolute inset-0 select-none outline-none"
+        onClick={doWave}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            doWave()
+          }
+        }}
         animate={hop ? { y: [0, -10, 0, -4, 0] } : { y: 0 }}
         transition={{ duration: 0.9 }}
       >
-        {/* respiração: o conjunto todo cresce um tiquinho a partir da base */}
-        <motion.div
-          className="absolute inset-0"
-          style={{ transformOrigin: '50% 100%' }}
-          animate={{ scaleY: [1, 1.006, 1] }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          <img src={LAYER('body-rest')} alt="" draggable={false} className={layer} />
+        <motion.div className="absolute inset-0" style={{ x: shift, rotate: lean, transformOrigin: '50% 100%' }}>
+          <Plumbob palette={mood.plumbob} scale={fx} cx={HEAD.cx * k} bottom={plumbobBottom} />
+          {mood.zzz && <Zzz left={(HEAD.right + 6) * k} top={(HEAD.top + 70) * k} scale={fx} />}
 
-          {/* cabeça: gira sobre o pescoço seguindo o mouse */}
-          <motion.div className="absolute inset-0" style={{ x: headX, y: headY, rotate: headRot, transformOrigin: headOrigin }}>
-            <img src={LAYER('head')} alt="" draggable={false} className={layer} />
+          {/* respiração: o conjunto todo cresce um tiquinho a partir da base */}
+          <motion.div
+            className="absolute inset-0"
+            style={{ transformOrigin: '50% 100%' }}
+            animate={{ scaleY: [1, 1.006, 1] }}
+            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <img
+              src={IDLE}
+              alt=""
+              draggable={false}
+              className={layer}
+              style={{ visibility: wave.playing ? 'hidden' : 'visible' }}
+            />
+            {wave.url && <img src={wave.url} alt="" draggable={false} className={layer} onLoad={onWaveLoad} />}
           </motion.div>
         </motion.div>
       </motion.div>
