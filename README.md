@@ -15,7 +15,7 @@ Obrigado pela inspiração, Jonathan!
 
 - React 19 + Vite
 - Tailwind CSS 3
-- Framer Motion
+- Framer Motion (também anima o avatar: camadas 2.5D recortadas do boneco, com ombro e cotovelo articulados; veja `src/components/AvatarRig.jsx`)
 - Dados reais por APIs públicas: Open-Meteo (clima) e GitHub (atividade)
 - Música via API oficial do YouTube
 

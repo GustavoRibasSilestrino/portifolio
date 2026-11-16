@@ -2,16 +2,15 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { useApp } from '../context'
 import { moodFor, PLUMBOB, useHour } from '../mood'
+import AvatarRig from './AvatarRig'
 
-// Avatar 3D (animado por IA), da cintura para cima, recortado quadro a quadro com fundo transparente:
-//  idle.webp  imagem parada (sempre visível, leve)
-//  wave.webp  animação do tchau (WebP animado, ~2 MB): carregada com a página já assentada e tocada ao clicar
-const SRC = { w: 1110, h: 1410 } // px do recorte (os dois arquivos têm essa proporção)
+// Avatar 2.5D em camadas (veja AvatarRig.jsx), da cintura para cima, com fundo transparente.
+// As camadas são recortadas do próprio boneco: o tchau é uma animação de articulações (ombro, cotovelo),
+// não um vídeo. O desenho do boneco vem das imagens em /public/avatar.
+const SRC = { w: 1110, h: 1410 } // px do recorte de referência (as camadas têm essa proporção)
 export const AVATAR_ASPECT = SRC.w / SRC.h // largura / altura
 const HEAD = { cx: 617, top: 77, right: 806 } // centro, topo e lado direito da cabeça (px do recorte)
-const IDLE = '/avatar/idle.webp'
-const WAVE = '/avatar/wave.webp'
-const WAVE_MS = 4480 // duração da animação do tchau
+const RIG_H = 762 // altura (px) do sistema de coordenadas das camadas
 
 // Foto de perfil da janela "Sobre mim": rosto recortado da foto real.
 export function Face({ className = '' }) {
@@ -96,23 +95,7 @@ function Zzz({ left, top, scale }) {
   )
 }
 
-// Baixa a animação do tchau uma vez (quando a página já assentou) e guarda o arquivo na memória:
-// a cada clique criamos uma URL nova a partir dele, o que reinicia o WebP sem baixar de novo.
-let waveBlob = null
-let wavePending = null
-function loadWave() {
-  if (waveBlob) return Promise.resolve(waveBlob)
-  wavePending ??= fetch(WAVE)
-    .then((r) => (r.ok ? r.blob() : Promise.reject(new Error(String(r.status)))))
-    .then((b) => (waveBlob = b))
-    .catch(() => {
-      wavePending = null
-      return null
-    })
-  return wavePending
-}
-
-// Avatar 3D (da cintura para cima): respira, acompanha o mouse e acena quando clicado.
+// Avatar (da cintura para cima): respira, acompanha o mouse com o corpo e acena quando clicado.
 // No estilo Sims: plumbob e humor que muda com a hora do dia.
 // `size` é a ALTURA do avatar na tela (px); a largura segue a proporção da imagem.
 export default function Avatar({ size = 440 }) {
@@ -123,9 +106,8 @@ export default function Avatar({ size = 440 }) {
   const { t } = useApp()
   const mood = moodFor(useHour())
   const [hop, setHop] = useState(false)
-  const [wave, setWave] = useState({ url: null, playing: false }) // animação em andamento
   const box = useRef(null)
-  const endTimer = useRef(null)
+  const rig = useRef(null)
 
   // mouse normalizado (-1..1) em relação ao avatar: o corpo se inclina de leve para o lado do cursor
   const mx = useMotionValue(0)
@@ -144,24 +126,6 @@ export default function Avatar({ size = 440 }) {
     return () => window.removeEventListener('pointermove', move)
   }, [mx])
 
-  // pré-carrega o tchau em segundo plano, sem competir com a abertura da página
-  useEffect(() => {
-    const go = () => loadWave()
-    if ('requestIdleCallback' in window) {
-      const id = window.requestIdleCallback(go, { timeout: 5000 })
-      return () => window.cancelIdleCallback(id)
-    }
-    const id = setTimeout(go, 3000)
-    return () => clearTimeout(id)
-  }, [])
-
-  useEffect(
-    () => () => {
-      clearTimeout(endTimer.current)
-    },
-    [],
-  )
-
   // animado (manhã): um pulinho de vez em quando
   useEffect(() => {
     if (!mood.bounce) return
@@ -176,27 +140,9 @@ export default function Avatar({ size = 440 }) {
     }
   }, [mood.bounce])
 
-  const endWave = (url) => {
-    clearTimeout(endTimer.current)
-    setWave({ url: null, playing: false })
-    URL.revokeObjectURL(url)
-  }
-  const doWave = async () => {
-    if (wave.url) return // já está acenando
-    const blob = await loadWave()
-    if (!blob) return
-    setWave({ url: URL.createObjectURL(blob), playing: false })
-  }
-  // o WebP animado começa a correr quando termina de carregar: aí escondemos a imagem parada e marcamos o fim
-  const onWaveLoad = () => {
-    setWave((w) => ({ ...w, playing: true }))
-    const url = wave.url
-    clearTimeout(endTimer.current)
-    endTimer.current = setTimeout(() => endWave(url), WAVE_MS + 120)
-  }
+  const doWave = () => rig.current?.wave() // já acenando? o rig ignora o clique
 
   const plumbobBottom = (HEAD.top - 8) * k
-  const layer = 'pointer-events-none absolute inset-0 h-full w-full select-none'
 
   return (
     <div className="relative" style={{ width: Wd, height: S }}>
@@ -228,14 +174,7 @@ export default function Avatar({ size = 440 }) {
             animate={{ scaleY: [1, 1.006, 1] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
           >
-            <img
-              src={IDLE}
-              alt=""
-              draggable={false}
-              className={layer}
-              style={{ visibility: wave.playing ? 'hidden' : 'visible' }}
-            />
-            {wave.url && <img src={wave.url} alt="" draggable={false} className={layer} onLoad={onWaveLoad} />}
+            <AvatarRig ref={rig} k={S / RIG_H} />
           </motion.div>
         </motion.div>
       </motion.div>
